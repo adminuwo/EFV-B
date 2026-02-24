@@ -136,6 +136,11 @@ module.exports = {
     Product: JsonModel.createModel('products.json'),
     Purchase: JsonModel.createModel('purchases.json'),
     Order: JsonModel.createModel('orders.json'),
+    Cart: JsonModel.createModel('cart.json'),
     UserProgress: JsonModel.createModel('progress.json'),
-    DigitalLibrary: JsonModel.createModel('digital_library.json')
+    DigitalLibrary: JsonModel.createModel('digital_library.json'),
+    Payment: JsonModel.createModel('payments.json'),
+    Shipment: JsonModel.createModel('shipments.json'),
+    Coupon: JsonModel.createModel('coupons.json'),
+    Support: JsonModel.createModel('support.json')
 };

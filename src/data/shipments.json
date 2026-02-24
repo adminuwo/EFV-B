@@ -1,0 +1,10 @@
+[
+    {
+        "orderId": "65d8a1b2c3d4e5f678901234",
+        "courierName": "BlueDart",
+        "awbNumber": "BD987654321",
+        "shippingStatus": "Shipped",
+        "trackingLink": "https://www.bluedart.com/tracking?awb=BD987654321",
+        "createdAt": "2026-02-22T11:00:00Z"
+    }
+]

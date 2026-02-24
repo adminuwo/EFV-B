@@ -11,14 +11,20 @@ const adminAuth = async (req, res, next) => {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
 
-        const admin = await User.findOne({ _id: decoded.id, role: 'admin' });
+        const adminUser = await User.findById(decoded.id);
 
-        if (!admin) {
+        if (!adminUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isAdmin = adminUser.role === 'admin' || (adminUser.email && adminUser.email.toLowerCase() === 'admin@uwo24.com');
+
+        if (!isAdmin) {
             return res.status(403).json({ message: 'Access denied: Admin rights required' });
         }
 
-        req.user = admin; // For consistency with standard protect middleware
-        req.admin = admin; // For backwards compatibility
+        req.user = adminUser;
+        req.admin = adminUser;
         next();
     } catch (error) {
         console.error('Admin Auth Error:', error);

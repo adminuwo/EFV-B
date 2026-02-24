@@ -86,4 +86,12 @@ const validatePurchase = async (req, res, next) => {
     }
 };
 
-module.exports = { protect, validatePurchase };
+const admin = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.email.toLowerCase() === 'admin@uwo24.com')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Access denied: Admin only' });
+    }
+};
+
+module.exports = { protect, validatePurchase, admin };

@@ -1,0 +1,22 @@
+[
+    {
+        "code": "WELCOME10",
+        "type": "Percentage",
+        "value": 10,
+        "usageLimit": 100,
+        "usedCount": 5,
+        "expiryDate": "2026-12-31T23:59:59Z",
+        "isActive": true,
+        "createdAt": "2026-02-20T08:00:00Z"
+    },
+    {
+        "code": "FLAT50",
+        "type": "Fixed",
+        "value": 50,
+        "usageLimit": 50,
+        "usedCount": 12,
+        "expiryDate": "2026-03-31T23:59:59Z",
+        "isActive": true,
+        "createdAt": "2026-02-21T09:00:00Z"
+    }
+]

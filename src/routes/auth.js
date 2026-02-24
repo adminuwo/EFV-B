@@ -39,7 +39,15 @@ router.post('/register', async (req, res) => {
             email,
             phone: phone || '',
             password: hashedPassword,
-            role: 'user'
+            role: 'user',
+            notifications: [{
+                _id: 'welcome-new-' + Date.now(),
+                type: 'Digital',
+                title: `Welcome to EFV, ${name}! 🚀`,
+                message: "Your journey starts here. Explore our marketplace and build your personal library.",
+                isRead: false,
+                createdAt: new Date().toISOString()
+            }]
         });
 
         // Response with Token
@@ -84,6 +92,25 @@ router.post('/login', async (req, res) => {
         }
 
         // Success
+        // 1. Add Welcome Notification if not added recently (e.g., last 24h)
+        user.notifications = user.notifications || [];
+        const lastWelcome = user.notifications.find(n => n.title.includes('Welcome back'));
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+        if (!lastWelcome || new Date(lastWelcome.createdAt) < oneDayAgo) {
+            user.notifications.unshift({
+                _id: 'welcome-' + Date.now(),
+                type: 'Digital',
+                title: `Welcome back, ${user.name}! 👋`,
+                message: "Great to see you again. Your personal activity center is ready.",
+                isRead: false,
+                createdAt: new Date().toISOString()
+            });
+            // Keep notifications list manageable
+            if (user.notifications.length > 50) user.notifications = user.notifications.slice(0, 50);
+            await user.save();
+        }
+
         res.json({
             _id: user._id,
             name: user.name,

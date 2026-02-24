@@ -4,19 +4,28 @@ const multer = require('multer');
 const path = require('path');
 const adminAuth = require('../middleware/adminAuth');
 
+const fs = require('fs');
+
 // Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const rootDir = path.join(__dirname, '../../');
+        let dest = '';
         if (file.fieldname === 'cover') {
-            cb(null, path.join(rootDir, 'src/uploads/covers'));
+            dest = path.join(rootDir, 'src/uploads/covers');
         } else if (file.fieldname === 'ebook') {
-            cb(null, path.join(rootDir, 'src/uploads/ebooks'));
+            dest = path.join(rootDir, 'src/uploads/ebooks');
         } else if (file.fieldname === 'audio') {
-            cb(null, path.join(rootDir, 'src/uploads/audios'));
+            dest = path.join(rootDir, 'src/uploads/audios');
         } else {
-            cb({ message: 'Invalid field name' }, false);
+            return cb({ message: 'Invalid field name' }, false);
         }
+
+        // Ensure directory exists
+        if (!fs.existsSync(dest)) {
+            fs.mkdirSync(dest, { recursive: true });
+        }
+        cb(null, dest);
     },
     filename: function (req, file, cb) {
         // Sanitize original name (remove spaces and special chars)

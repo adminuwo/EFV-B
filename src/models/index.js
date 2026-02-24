@@ -193,6 +193,18 @@ const userProgressSchema = new mongoose.Schema({
     lastUpdated: { type: Date, default: Date.now }
 });
 
+const supportSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    name: String,
+    email: String,
+    subject: String,
+    message: String,
+    status: { type: String, enum: ['Open', 'In Progress', 'Resolved', 'Closed'], default: 'Open' },
+    reply: String,
+    repliedAt: Date,
+    createdAt: { type: Date, default: Date.now }
+});
+
 userProgressSchema.index({ userId: 1, productId: 1 }, { unique: true });
 
 module.exports = {
@@ -205,5 +217,6 @@ module.exports = {
     UserProgress: mongoose.model('UserProgress', userProgressSchema),
     Payment: mongoose.model('Payment', paymentSchema),
     Shipment: mongoose.model('Shipment', shipmentSchema),
-    Coupon: mongoose.model('Coupon', couponSchema)
+    Coupon: mongoose.model('Coupon', couponSchema),
+    Support: mongoose.model('Support', supportSchema)
 };

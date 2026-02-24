@@ -46,6 +46,10 @@ app.use('/api/chat', require('./routes/chat'));
 app.use('/api/progress', require('./routes/progress'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/shipments', require('./routes/shipments'));
+app.use('/api/coupons', require('./routes/coupons'));
+app.use('/api/support', require('./routes/support'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

@@ -6,7 +6,17 @@
     "role": "admin",
     "_id": "admin_user_001",
     "createdAt": "2026-02-18T08:30:00.000Z",
-    "updatedAt": "2026-02-18T08:30:00.000Z"
+    "updatedAt": "2026-02-24T08:25:02.562Z",
+    "notifications": [
+      {
+        "_id": "welcome-1771921502561",
+        "type": "Digital",
+        "title": "Welcome back, Super Admin! 👋",
+        "message": "Great to see you again. Your personal activity center is ready.",
+        "isRead": false,
+        "createdAt": "2026-02-24T08:25:02.561Z"
+      }
+    ]
   },
   {
     "name": "abha",
@@ -14,10 +24,10 @@
     "password": "$2a$10$Efv.K7OhxidNWXGwV29Gse7qieAm6f6KR30M9SL0SdbUMMIqpeDAy",
     "_id": "mlrnq3u492vak53seqk",
     "createdAt": "2026-02-18T06:34:35.116Z",
-    "updatedAt": "2026-02-19T10:25:48.717Z",
-    "resetPasswordOTP": null,
-    "resetPasswordExpires": null,
-    "resetAttempts": null
+    "updatedAt": "2026-02-24T11:19:20.438Z",
+    "resetPasswordOTP": "$2a$10$jYi6v561eW2DK8arpRfelOveUUb8QH5JFEIZMeiuwS4.XZmQg6eES",
+    "resetPasswordExpires": "2026-02-24T11:29:20.437Z",
+    "resetAttempts": 0
   },
   {
     "name": "neha",
@@ -28,15 +38,33 @@
     "updatedAt": "2026-02-18T08:04:44.885Z"
   },
   {
-    "name": "aditi",
+    "name": "ADITI",
     "email": "aditi@uwo24.com",
     "password": "$2a$10$/PVfI.EETfYEtjIjLevskO6kViVSo5WFg4qdBo0jT92b9rXOadCUi",
     "_id": "mlt058axclnz799ag4q",
     "createdAt": "2026-02-19T05:10:02.313Z",
-    "updatedAt": "2026-02-19T11:16:29.601Z",
+    "updatedAt": "2026-02-24T15:23:35.772Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
-    "resetAttempts": null
+    "resetAttempts": null,
+    "notifications": [
+      {
+        "title": "New Support Reply",
+        "message": "Admin replied to your ticket: \"techh\"",
+        "type": "General",
+        "link": "profile.html?tab=support",
+        "createdAt": "2026-02-24T15:23:35.772Z",
+        "isRead": false
+      },
+      {
+        "_id": "welcome-1771921322151",
+        "type": "Digital",
+        "title": "Welcome back, aditi! 👋",
+        "message": "Great to see you again. Your personal activity center is ready.",
+        "isRead": false,
+        "createdAt": "2026-02-24T08:22:02.151Z"
+      }
+    ]
   },
   {
     "name": "devansh",
