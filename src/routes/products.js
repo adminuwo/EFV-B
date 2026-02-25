@@ -130,6 +130,7 @@ router.put('/:id', adminAuth, async (req, res) => {
 
 // Delete Product (Admin Only)
 router.delete('/:id', adminAuth, async (req, res) => {
+    console.log(`🗑️ Admin: Deleting Product Request for ID: ${req.params.id}`);
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) {

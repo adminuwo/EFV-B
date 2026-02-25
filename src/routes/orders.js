@@ -420,6 +420,7 @@ router.post('/test-digital', protect, async (req, res) => {
 
 // Delete Order (Admin Only)
 router.delete('/:id', adminAuth, async (req, res) => {
+    console.log(`🗑️ Admin: Deleting Order Request for ID: ${req.params.id}`);
     try {
         const order = await Order.findByIdAndDelete(req.params.id) || await Order.findOneAndDelete({ orderId: req.params.id });
         if (!order) {

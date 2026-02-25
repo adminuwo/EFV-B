@@ -25,8 +25,10 @@ router.post('/', adminAuth, async (req, res) => {
 
 // Delete coupon
 router.delete('/:id', adminAuth, async (req, res) => {
+    console.log(`🗑️ Admin: Deleting Coupon Request for ID: ${req.params.id}`);
     try {
-        await Coupon.findByIdAndDelete(req.params.id);
+        const coupon = await Coupon.findByIdAndDelete(req.params.id);
+        if (!coupon) return res.status(404).json({ message: 'Coupon not found' });
         res.json({ message: 'Coupon deleted' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting coupon' });
