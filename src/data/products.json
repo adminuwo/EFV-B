@@ -282,5 +282,26 @@
     "height": 0,
     "duration": "",
     "updatedAt": "2026-02-26T10:39:31.492Z"
+  },
+  {
+    "title": "this is for testing ",
+    "author": "EFV Authorized Member",
+    "price": 800,
+    "discountPrice": 40,
+    "type": "HARDCOVER",
+    "description": "4r",
+    "thumbnail": "uploads/covers/cover-1772122269854-124741562-screenshot__595_.png",
+    "stock": 44,
+    "category": "Digital",
+    "language": "Hindi",
+    "volume": "",
+    "weight": 0,
+    "length": 0,
+    "breadth": 0,
+    "height": 0,
+    "duration": "",
+    "_id": "mm3nueoso2mq9sqqky",
+    "createdAt": "2026-02-26T16:11:09.916Z",
+    "updatedAt": "2026-02-26T16:11:09.916Z"
   }
 ]

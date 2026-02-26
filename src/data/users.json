@@ -6,8 +6,16 @@
     "role": "admin",
     "_id": "admin_user_001",
     "createdAt": "2026-02-18T08:30:00.000Z",
-    "updatedAt": "2026-02-26T09:26:53.117Z",
+    "updatedAt": "2026-02-26T16:09:57.730Z",
     "notifications": [
+      {
+        "_id": "welcome-1772122197729",
+        "type": "Digital",
+        "title": "Welcome back, ADMIN! 👋",
+        "message": "Great to see you again. Your personal activity center is ready.",
+        "isRead": false,
+        "createdAt": "2026-02-26T16:09:57.729Z"
+      },
       {
         "_id": "welcome-1772017040519",
         "type": "Digital",
@@ -54,11 +62,28 @@
     "password": "$2a$10$HjrfktWW0zAgMFzcZ/6vU.vTu5V6ZhwWia91vpc/YKOzRZgFtO.Q2",
     "_id": "mlt058axclnz799ag4q",
     "createdAt": "2026-02-19T05:10:02.313Z",
-    "updatedAt": "2026-02-26T09:54:03.302Z",
+    "updatedAt": "2026-02-26T16:13:06.116Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
     "resetAttempts": null,
     "notifications": [
+      {
+        "_id": "reply-1772122386115",
+        "title": "New Support Reply",
+        "message": "Admin replied to your ticket: \"gtgg\"",
+        "type": "General",
+        "link": "profile.html?tab=support",
+        "isRead": false,
+        "createdAt": "2026-02-26T16:13:06.115Z"
+      },
+      {
+        "_id": "welcome-1772122313526",
+        "type": "Digital",
+        "title": "Welcome back, Aditi! 👋",
+        "message": "Great to see you again. Your personal activity center is ready.",
+        "isRead": false,
+        "createdAt": "2026-02-26T16:11:53.526Z"
+      },
       {
         "_id": "reply-1772097083158",
         "title": "New Support Reply",
