@@ -1,12 +1,12 @@
 [
   {
-    "name": "Super Admin",
+    "name": "ADMIN",
     "email": "admin@uwo24.com",
     "password": "$2a$10$sG6zXlxE6DS6tS7zpBA.oeMN8hBE3hWTw5IEFXp5Xs866uwVi9fha",
     "role": "admin",
     "_id": "admin_user_001",
     "createdAt": "2026-02-18T08:30:00.000Z",
-    "updatedAt": "2026-02-25T11:01:45.308Z",
+    "updatedAt": "2026-02-26T09:26:53.117Z",
     "notifications": [
       {
         "_id": "welcome-1772017040519",
@@ -49,47 +49,39 @@
     "updatedAt": "2026-02-18T08:04:44.885Z"
   },
   {
-    "name": "abha ",
+    "name": "Aditi",
     "email": "aditi@uwo24.com",
-    "password": "$2a$10$/PVfI.EETfYEtjIjLevskO6kViVSo5WFg4qdBo0jT92b9rXOadCUi",
+    "password": "$2a$10$HjrfktWW0zAgMFzcZ/6vU.vTu5V6ZhwWia91vpc/YKOzRZgFtO.Q2",
     "_id": "mlt058axclnz799ag4q",
     "createdAt": "2026-02-19T05:10:02.313Z",
-    "updatedAt": "2026-02-25T09:54:08.667Z",
+    "updatedAt": "2026-02-26T09:54:03.302Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
     "resetAttempts": null,
     "notifications": [
       {
+        "_id": "reply-1772097083158",
+        "title": "New Support Reply",
+        "message": "Admin replied to your ticket: \"techh\"",
+        "type": "General",
+        "link": "profile.html?tab=support",
+        "isRead": false,
+        "createdAt": "2026-02-26T09:11:23.158Z"
+      },
+      {
         "_id": "welcome-1772013248666",
         "type": "Digital",
         "title": "Welcome back, abha ! 👋",
         "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
+        "isRead": true,
         "createdAt": "2026-02-25T09:54:08.666Z"
-      },
-      {
-        "_id": "reply-1771998626107",
-        "title": "New Support Reply",
-        "message": "Admin replied to your ticket: \"techh\"",
-        "type": "General",
-        "link": "profile.html?tab=support",
-        "isRead": false,
-        "createdAt": "2026-02-25T05:50:26.107Z"
-      },
-      {
-        "title": "New Support Reply",
-        "message": "Admin replied to your ticket: \"techh\"",
-        "type": "General",
-        "link": "profile.html?tab=support",
-        "createdAt": "2026-02-24T15:23:35.772Z",
-        "isRead": false
       },
       {
         "_id": "welcome-1771921322151",
         "type": "Digital",
         "title": "Welcome back, aditi! 👋",
         "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
+        "isRead": true,
         "createdAt": "2026-02-24T08:22:02.151Z"
       }
     ],
@@ -104,10 +96,41 @@
         "area": "VFDSFD",
         "landmark": "FDV",
         "type": "Home",
-        "isDefault": true,
+        "isDefault": false,
         "fullAddress": "DFV, VFDSFD",
         "_id": "addr_mm1sn0lvt49z83rurdf"
+      },
+      {
+        "fullName": "abha ",
+        "phone": "8982882237",
+        "pincode": "482001",
+        "state": "jabalpur ",
+        "city": "jabalpur ",
+        "house": "tytdjy",
+        "area": "tj",
+        "landmark": "ghj",
+        "type": "Home",
+        "isDefault": true,
+        "fullAddress": "tytdjy, tj",
+        "_id": "addr_mm31qv431abiel7d0nl"
+      },
+      {
+        "fullName": "yt",
+        "phone": "8982882237",
+        "pincode": "282001",
+        "state": "jj",
+        "city": "jj",
+        "house": "g",
+        "area": "hh",
+        "landmark": "gg",
+        "type": "Work",
+        "isDefault": false,
+        "fullAddress": "g, hh",
+        "_id": "addr_mm31s5214s0q8jezvwa"
       }
+    ],
+    "purchasedProducts": [
+      "efv_v2_ebook"
     ]
   },
   {

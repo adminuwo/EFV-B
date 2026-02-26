@@ -40,11 +40,19 @@
         "thumbnail": "img/vol1-cover.png",
         "filePath": "uploads/ebooks/ebook-1771479889065-14715826-_____1.pdf",
         "purchasedAt": "2026-02-19T06:03:52.902Z"
+      },
+      {
+        "productId": "efv_v2_ebook",
+        "title": "EFV™ VOL 2: MINDOS™",
+        "type": "E-Book",
+        "thumbnail": "img/vol 2.png",
+        "filePath": "ebooks/ebook-1771411240159-635425919.pdf",
+        "purchasedAt": "2026-02-26T07:17:00.401Z"
       }
     ],
     "_id": "mlt21wpmajenoi58ujs",
     "createdAt": "2026-02-19T06:03:26.554Z",
-    "updatedAt": "2026-02-19T06:03:52.903Z"
+    "updatedAt": "2026-02-26T10:39:56.010Z"
   },
   {
     "userId": "mlrnq3u492vak53seqk",

@@ -135,8 +135,22 @@ router.post('/wishlist/toggle', protect, async (req, res) => {
 // Get Notifications
 router.get('/notifications', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('notifications');
-        res.json(user.notifications.sort((a, b) => b.createdAt - a.createdAt));
+        const user = await User.findById(req.user._id);
+        let changed = false;
+
+        // Ensure every notification has an ID for frontend tracking
+        user.notifications.forEach(note => {
+            if (!note._id && !note.id) {
+                note._id = 'note-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            await user.save();
+        }
+
+        res.json(user.notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     } catch (error) {
         res.status(500).json({ message: 'Error fetching notifications' });
     }
@@ -166,6 +180,36 @@ router.put('/notifications/read-all', protect, async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ message: 'Error updating notifications' });
+    }
+});
+
+// Delete Notification
+router.delete('/notifications/:id', protect, async (req, res) => {
+    try {
+        console.log(`🗑️ Attempting to delete notification: ${req.params.id} for user: ${req.user.email}`);
+        const user = await User.findById(req.user._id);
+
+        const initialCount = user.notifications.length;
+        // Robust filtering: handle both hyphen and underscore variations
+        user.notifications = user.notifications.filter(n => {
+            const dbId = (n._id || n.id).toString();
+            const reqId = req.params.id;
+            return dbId !== reqId &&
+                dbId.replace(/-/g, '_') !== reqId &&
+                dbId.replace(/_/g, '-') !== reqId;
+        });
+
+        if (user.notifications.length === initialCount) {
+            console.warn(`⚠️ Notification ${req.params.id} not found in user's list`);
+        } else {
+            console.log(`✅ Notification ${req.params.id} removed successfully`);
+        }
+
+        await user.save();
+        res.json({ success: true, message: 'Notification deleted' });
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        res.status(500).json({ message: 'Error deleting notification' });
     }
 });
 
