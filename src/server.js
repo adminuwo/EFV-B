@@ -16,8 +16,22 @@ console.log('--- DATABASE MODE CHECK ---');
 console.log('USE_JSON_DB:', process.env.USE_JSON_DB);
 console.log('---------------------------');
 
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Google Cloud Root Route (Verification)
+app.get('/', (req, res) => {
+    res.send(`<h1>EFV Backend Active</h1><p>Status: Healthy</p><p>Version: 1.2.0</p>`);
+});
+
+// Health Check for Cloud Deployment (Render/Railway/AWS/GCP)
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'active', uptime: process.uptime() });
+});
 
 // In-memory storage for demo mode (no MongoDB required)
 global.demoUsers = new Map(); // email -> { name, email, library: [] }
@@ -68,6 +82,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8080;
 
+app.get("/", (req,res) => {
+    res.send("EFV Backend Active");
+ });
+ 
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });

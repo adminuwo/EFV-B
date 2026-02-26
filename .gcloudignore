@@ -1,0 +1,10 @@
+# Exclude local files from GCP upload
+node_modules
+.git
+.env
+Dockerfile
+.dockerignore
+npm-debug.log
+src/data/auth_debug.log
+# Don't upload local data if using JSON DB (GCP should start fresh or use external DB)
+# src/data/*.json
