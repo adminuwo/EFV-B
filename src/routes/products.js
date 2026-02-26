@@ -73,6 +73,32 @@ router.post('/', adminAuth, async (req, res) => {
             }
         }
 
+        // 🔔 Broadcase Notification to ALL users about the new book
+        try {
+            const { User } = require('../models');
+            const users = await User.find({});
+            const notification = {
+                _id: 'new-book-' + Date.now(),
+                title: 'New Arrival! 📚',
+                message: `"${product.title}" is now available in the marketplace. Check it out now!`,
+                type: 'Digital',
+                link: 'dashboard',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            };
+
+            for (let user of users) {
+                if (!user.notifications) user.notifications = [];
+                user.notifications.unshift(notification);
+                // Keep list small
+                if (user.notifications.length > 50) user.notifications = user.notifications.slice(0, 50);
+                await user.save();
+            }
+            console.log(`📢 Broadcase new book alert to ${users.length} users.`);
+        } catch (noteErr) {
+            console.error('Broadcast notification error:', noteErr);
+        }
+
         res.status(201).json(product);
     } catch (error) {
         console.error('Create product error:', error);

@@ -92,24 +92,7 @@ router.post('/login', async (req, res) => {
         }
 
         // Success
-        // 1. Add Welcome Notification if not added recently (e.g., last 24h)
-        user.notifications = user.notifications || [];
-        const lastWelcome = user.notifications.find(n => n.title.includes('Welcome back'));
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-        if (!lastWelcome || new Date(lastWelcome.createdAt) < oneDayAgo) {
-            user.notifications.unshift({
-                _id: 'welcome-' + Date.now(),
-                type: 'Digital',
-                title: `Welcome back, ${user.name}! 👋`,
-                message: "Great to see you again. Your personal activity center is ready.",
-                isRead: false,
-                createdAt: new Date().toISOString()
-            });
-            // Keep notifications list manageable
-            if (user.notifications.length > 50) user.notifications = user.notifications.slice(0, 50);
-            await user.save();
-        }
+        // Login success - no extra notification added here to prevent spam
 
         res.json({
             _id: user._id,

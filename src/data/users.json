@@ -9,25 +9,9 @@
     "updatedAt": "2026-02-26T16:09:57.730Z",
     "notifications": [
       {
-        "_id": "welcome-1772122197729",
-        "type": "Digital",
-        "title": "Welcome back, ADMIN! 👋",
-        "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
-        "createdAt": "2026-02-26T16:09:57.729Z"
-      },
-      {
-        "_id": "welcome-1772017040519",
-        "type": "Digital",
-        "title": "Welcome back, Super Admin! 👋",
-        "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
-        "createdAt": "2026-02-25T10:57:20.519Z"
-      },
-      {
         "_id": "welcome-1771921502561",
         "type": "Digital",
-        "title": "Welcome back, Super Admin! 👋",
+        "title": "Welcome back, Super Admin! \ud83d\udc4b",
         "message": "Great to see you again. Your personal activity center is ready.",
         "isRead": false,
         "createdAt": "2026-02-24T08:25:02.561Z"
@@ -68,21 +52,12 @@
     "resetAttempts": null,
     "notifications": [
       {
-        "_id": "reply-1772122386115",
-        "title": "New Support Reply",
-        "message": "Admin replied to your ticket: \"gtgg\"",
-        "type": "General",
-        "link": "profile.html?tab=support",
-        "isRead": false,
-        "createdAt": "2026-02-26T16:13:06.115Z"
-      },
-      {
-        "_id": "welcome-1772122313526",
+        "_id": "welcome-1771921322151",
         "type": "Digital",
-        "title": "Welcome back, Aditi! 👋",
+        "title": "Welcome back, aditi! \ud83d\udc4b",
         "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
-        "createdAt": "2026-02-26T16:11:53.526Z"
+        "isRead": true,
+        "createdAt": "2026-02-24T08:22:02.151Z"
       },
       {
         "_id": "reply-1772097083158",
@@ -94,20 +69,13 @@
         "createdAt": "2026-02-26T09:11:23.158Z"
       },
       {
-        "_id": "welcome-1772013248666",
-        "type": "Digital",
-        "title": "Welcome back, abha ! 👋",
-        "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": true,
-        "createdAt": "2026-02-25T09:54:08.666Z"
-      },
-      {
-        "_id": "welcome-1771921322151",
-        "type": "Digital",
-        "title": "Welcome back, aditi! 👋",
-        "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": true,
-        "createdAt": "2026-02-24T08:22:02.151Z"
+        "_id": "reply-1772122386115",
+        "title": "New Support Reply",
+        "message": "Admin replied to your ticket: \"gtgg\"",
+        "type": "General",
+        "link": "profile.html?tab=support",
+        "isRead": false,
+        "createdAt": "2026-02-26T16:13:06.115Z"
       }
     ],
     "savedAddresses": [
@@ -211,17 +179,9 @@
     "role": "user",
     "notifications": [
       {
-        "_id": "welcome-1772005171735",
-        "type": "Digital",
-        "title": "Welcome back, Test User! 👋",
-        "message": "Great to see you again. Your personal activity center is ready.",
-        "isRead": false,
-        "createdAt": "2026-02-25T07:39:31.735Z"
-      },
-      {
         "_id": "welcome-new-1772005114747",
         "type": "Digital",
-        "title": "Welcome to EFV, Test User! 🚀",
+        "title": "Welcome to EFV, Test User! \ud83d\ude80",
         "message": "Your journey starts here. Explore our marketplace and build your personal library.",
         "isRead": false,
         "createdAt": "2026-02-25T07:38:34.747Z"

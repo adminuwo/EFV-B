@@ -231,6 +231,23 @@ router.post('/verify', protect, async (req, res) => {
             console.log(`✅ Digital items added to library for user: ${user.email}`);
         }
 
+        // 🔔 Add Purchase Notification
+        try {
+            if (!user.notifications) user.notifications = [];
+            user.notifications.unshift({
+                _id: 'purchase-' + Date.now(),
+                title: 'Purchase Successful! 🎉',
+                message: `Thank you for your order ${newOrder.orderId}. Your items are being processed.`,
+                type: 'Order',
+                link: 'profile.html?tab=orders',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            });
+            await user.save();
+        } catch (noteErr) {
+            console.error('Purchase notification error:', noteErr);
+        }
+
         res.status(201).json({
             success: true,
             order: newOrder,
@@ -403,6 +420,23 @@ router.post('/test-digital', protect, async (req, res) => {
             console.log(`✅ Library updated for user ${user._id}: added ${product.title}`);
         } else {
             console.log(`ℹ️ Product already in library for user ${user._id}: ${product.title}`);
+        }
+
+        // 🔔 Add Purchase Notification (Test Mode)
+        try {
+            if (!user.notifications) user.notifications = [];
+            user.notifications.unshift({
+                _id: 'purchase-test-' + Date.now(),
+                title: 'Item Unlocked! 🔓',
+                message: `"${product.title}" has been successfully added to your library.`,
+                type: 'Order',
+                link: 'profile.html?tab=library',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            });
+            await user.save();
+        } catch (noteErr) {
+            console.error('Test purchase notification error:', noteErr);
         }
 
         res.status(200).json({
