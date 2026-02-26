@@ -4,7 +4,7 @@ const data = JSON.stringify({ message: 'Explain the philosophy of quantum alignm
 
 const req = http.request({
     hostname: 'localhost',
-    port: 5000,
+    port: 8080,
     path: '/api/chat/message',
     method: 'POST',
     headers: {
