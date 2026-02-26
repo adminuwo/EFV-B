@@ -13,8 +13,8 @@ RUN npm install
 # Copy app source code
 COPY . .
 
-# Expose the port the app runs on (based on logs it was 5000)
-EXPOSE 5000
+# Expose the port the app runs on (matching .env/server.js)
+EXPOSE 8080
 
 # Start the application
 CMD ["npm", "start"]
