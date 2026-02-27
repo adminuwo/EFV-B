@@ -6,8 +6,17 @@
     "role": "admin",
     "_id": "admin_user_001",
     "createdAt": "2026-02-18T08:30:00.000Z",
-    "updatedAt": "2026-02-26T16:09:57.730Z",
+    "updatedAt": "2026-02-27T09:01:38.223Z",
     "notifications": [
+      {
+        "_id": "purchase-1772182898221",
+        "title": "Purchase Successful! 🎉",
+        "message": "Thank you for your order ORD-898215400. Your items are being processed.",
+        "type": "Order",
+        "link": "profile.html?tab=orders",
+        "isRead": false,
+        "createdAt": "2026-02-27T09:01:38.222Z"
+      },
       {
         "_id": "welcome-1771921502561",
         "type": "Digital",
@@ -24,13 +33,13 @@
   {
     "name": "abha",
     "email": "abha@uwo24.com",
-    "password": "$2a$10$Efv.K7OhxidNWXGwV29Gse7qieAm6f6KR30M9SL0SdbUMMIqpeDAy",
+    "password": "$2a$10$fSqcc2xdtTLQwkosRflvQerBf3mZ3d4mmgxzR22755ikTB2aIRN1W",
     "_id": "mlrnq3u492vak53seqk",
     "createdAt": "2026-02-18T06:34:35.116Z",
-    "updatedAt": "2026-02-24T11:19:20.438Z",
-    "resetPasswordOTP": "$2a$10$jYi6v561eW2DK8arpRfelOveUUb8QH5JFEIZMeiuwS4.XZmQg6eES",
-    "resetPasswordExpires": "2026-02-24T11:29:20.437Z",
-    "resetAttempts": 0
+    "updatedAt": "2026-02-27T09:04:21.643Z",
+    "resetPasswordOTP": null,
+    "resetPasswordExpires": null,
+    "resetAttempts": null
   },
   {
     "name": "neha",
@@ -172,5 +181,34 @@
     "_id": "mm1q3d6jet4v6wksuyt",
     "createdAt": "2026-02-25T07:38:34.747Z",
     "updatedAt": "2026-02-25T07:39:31.736Z"
+  },
+  {
+    "name": "sakshi",
+    "email": "sakshi@uwo24.com",
+    "phone": "6578556775",
+    "password": "$2a$10$1LUA60YvHd2TVwup8oNmaeF3TXEyVh5qWyO7h9JAV3fGkaf0sc6.C",
+    "role": "user",
+    "notifications": [
+      {
+        "_id": "purchase-1772185149905",
+        "title": "Purchase Successful! 🎉",
+        "message": "Thank you for your order ORD-149902167. Your items are being processed.",
+        "type": "Order",
+        "link": "profile.html?tab=orders",
+        "isRead": false,
+        "createdAt": "2026-02-27T09:39:09.906Z"
+      },
+      {
+        "_id": "welcome-new-1772185033920",
+        "type": "Digital",
+        "title": "Welcome to EFV, sakshi! 🚀",
+        "message": "Your journey starts here. Explore our marketplace and build your personal library.",
+        "isRead": false,
+        "createdAt": "2026-02-27T09:37:13.920Z"
+      }
+    ],
+    "_id": "mm4p7npe9ocy5nlbig8",
+    "createdAt": "2026-02-27T09:37:13.922Z",
+    "updatedAt": "2026-02-27T09:39:09.907Z"
   }
 ]

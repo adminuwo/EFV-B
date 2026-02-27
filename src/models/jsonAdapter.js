@@ -57,46 +57,76 @@ class JsonModel {
 
             static find(query = {}) {
                 const data = db.getAll();
+
+                const matchQuery = (item, queryObj) => {
+                    return Object.entries(queryObj).every(([key, value]) => {
+                        // Handle $or
+                        if (key === '$or' && Array.isArray(value)) {
+                            return value.some(subQuery => matchQuery(item, subQuery));
+                        }
+
+                        // Handle $and
+                        if (key === '$and' && Array.isArray(value)) {
+                            return value.every(subQuery => matchQuery(item, subQuery));
+                        }
+
+                        // Handle nested keys like "customer.email"
+                        let itemValue = item;
+                        if (key.includes('.')) {
+                            const parts = key.split('.');
+                            for (const part of parts) {
+                                itemValue = itemValue ? itemValue[part] : undefined;
+                            }
+                        } else {
+                            itemValue = item[key];
+                        }
+
+                        if (value instanceof RegExp) return itemValue && value.test(itemValue);
+                        return itemValue == value;
+                    });
+                };
+
                 let results = data;
                 if (Object.keys(query).length > 0) {
-                    results = data.filter(item => {
-                        return Object.entries(query).every(([key, value]) => {
-                            if (value instanceof RegExp) return value.test(item[key]);
-                            return item[key] == value;
-                        });
-                    });
+                    results = data.filter(item => matchQuery(item, query));
                 }
                 const attached = JsonModel._attachSave(results, db);
                 return new Query(attached);
             }
 
-            static async findOne(query) {
+            static findOne(query) {
                 const q = this.find(query);
-                const results = await q.exec();
-                return results[0] || null;
+                // Return a query that resolves to the first result
+                return new Query(q.then(results => results[0] || null));
             }
 
-            static async findById(id) {
-                if (!id) return null;
+            static findById(id) {
+                if (!id) return new Query(null);
                 const item = db.getById(id.toString());
-                return JsonModel._attachSave(item, db);
+                const attached = JsonModel._attachSave(item, db);
+                return new Query(attached);
             }
 
-            static async findByIdAndUpdate(id, updates, options = {}) {
+            static findByIdAndUpdate(id, updates, options = {}) {
+                if (!id) return new Query(null);
                 const updated = db.update(id.toString(), updates);
-                return JsonModel._attachSave(updated, db);
+                const attached = JsonModel._attachSave(updated, db);
+                return new Query(attached);
             }
 
-            static async findOneAndUpdate(query, updates, options = {}) {
-                let item = await this.findOne(query);
-                if (item) {
-                    const updatedItem = { ...item, ...updates };
-                    const result = db.update(item._id || item.id, updatedItem);
-                    return JsonModel._attachSave(result, db);
-                } else if (options.upsert) {
-                    return this.create({ ...query, ...updates });
-                }
-                return null;
+            static findOneAndUpdate(query, updates, options = {}) {
+                const run = async () => {
+                    let item = await this.findOne(query);
+                    if (item) {
+                        const updatedItem = { ...item, ...updates };
+                        const result = db.update(item._id || item.id, updatedItem);
+                        return JsonModel._attachSave(result, db);
+                    } else if (options.upsert) {
+                        return this.create({ ...query, ...updates });
+                    }
+                    return null;
+                };
+                return new Query(run());
             }
 
             static async updateMany(query, updates) {
@@ -137,22 +167,28 @@ class JsonModel {
                 return { deletedCount: data.length - filtered.length };
             }
 
-            static async findByIdAndDelete(id) {
-                const item = await this.findById(id);
-                if (item) {
-                    db.delete(id.toString());
-                    return item;
-                }
-                return null;
+            static findByIdAndDelete(id) {
+                const run = async () => {
+                    const item = await this.findById(id);
+                    if (item) {
+                        db.delete(id.toString());
+                        return item;
+                    }
+                    return null;
+                };
+                return new Query(run());
             }
 
-            static async findOneAndDelete(query) {
-                const item = await this.findOne(query);
-                if (item) {
-                    db.delete((item._id || item.id).toString());
-                    return item;
-                }
-                return null;
+            static findOneAndDelete(query) {
+                const run = async () => {
+                    const item = await this.findOne(query);
+                    if (item) {
+                        db.delete((item._id || item.id).toString());
+                        return item;
+                    }
+                    return null;
+                };
+                return new Query(run());
             }
         };
     }

@@ -1,66 +1,27 @@
+const axios = require('axios');
 const NIMBUS_BASE_URL = 'https://api.nimbuspost.com/v1';
 
 let cachedToken = null;
-let tokenExpiry = null;
 
 /**
  * Login to NimbusPost to get API Token
  */
 async function login() {
     try {
-        const response = await fetch(`${NIMBUS_BASE_URL}/users/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: process.env.NIMBUS_EMAIL,
-                password: process.env.NIMBUS_PASSWORD
-            })
+        const response = await axios.post(`${NIMBUS_BASE_URL}/users/login`, {
+            email: process.env.NIMBUS_EMAIL,
+            password: process.env.NIMBUS_PASSWORD
         });
 
-        const result = await response.json();
-        if (result.status && result.data) {
-            cachedToken = result.data;
-            // Token usually lasts for a long time, but let's assume valid unless 401
+        if (response.data.status && response.data.data) {
+            cachedToken = response.data.data.trim();
+            global.nimbusToken = cachedToken;
             return cachedToken;
         } else {
-            throw new Error(result.message || 'NimbusPost Login Failed');
+            throw new Error(response.data.message || 'NimbusPost Login Failed');
         }
     } catch (error) {
-        console.error('NimbusPost Login Error:', error.message);
-        throw error;
-    }
-}
-
-/**
- * Get Tracking Data for an AWB
- */
-async function trackShipment(awb) {
-    if (!cachedToken) {
-        await login();
-    }
-
-    try {
-        // Try POST first as it's more common in recent docs
-        const response = await fetch(`${NIMBUS_BASE_URL}/shipments/track`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${cachedToken}`
-            },
-            body: JSON.stringify({ awb })
-        });
-
-        let result = await response.json();
-
-        // Handle Token Expired (common code 401)
-        if (result.status === false && (result.message?.includes('expired') || result.message?.includes('token'))) {
-            await login();
-            return trackShipment(awb);
-        }
-
-        return result;
-    } catch (error) {
-        console.error('NimbusPost Tracking Error:', error.message);
+        console.error('❌ NimbusPost Login Error:', error.response?.data || error.message);
         throw error;
     }
 }
@@ -74,26 +35,78 @@ async function createShipment(orderData) {
     }
 
     try {
-        const response = await fetch(`${NIMBUS_BASE_URL}/shipments/create`, {
-            method: 'POST',
+        console.log('📦 Creating Nimbus Shipment with payload...', orderData.order_number);
+        const response = await axios.post(`${NIMBUS_BASE_URL}/shipments`, orderData, {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${cachedToken}`
-            },
-            body: JSON.stringify(orderData)
+                'Authorization': `Bearer ${cachedToken}`,
+                'Content-Type': 'application/json'
+            }
         });
 
-        let result = await response.json();
-
-        // Handle Token Expired
-        if (result.status === false && (result.message?.includes('expired') || result.message?.includes('token'))) {
+        console.log('📄 Nimbus API Response Status:', response.data.status);
+        return response.data;
+    } catch (error) {
+        // Handle Token Expired (401)
+        if (error.response?.status === 401 || (error.response?.data?.message?.toLowerCase().includes('token'))) {
+            console.log('🔄 Nimbus Token Expired, retrying...');
             await login();
             return createShipment(orderData);
         }
 
-        return result;
+        console.error('❌ NimbusPost Create Shipment Error:', error.response?.data || error.message);
+        return error.response?.data || { status: false, message: error.message };
+    }
+}
+
+/**
+ * Get Tracking Data for an AWB
+ */
+async function trackShipment(awb) {
+    if (!cachedToken) {
+        await login();
+    }
+
+    try {
+        const response = await axios.get(`${NIMBUS_BASE_URL}/shipments/track/${awb}`, {
+            headers: {
+                'Authorization': `Bearer ${cachedToken}`
+            }
+        });
+
+        return response.data;
     } catch (error) {
-        console.error('NimbusPost Create Shipment Error:', error.message);
+        if (error.response?.status === 401) {
+            await login();
+            return trackShipment(awb);
+        }
+        console.error('❌ NimbusPost Tracking Error:', error.response?.data || error.message);
+        throw error;
+    }
+}
+
+/**
+ * Get Serviceability for a pincode
+ */
+async function checkServiceability(data) {
+    if (!cachedToken) {
+        await login();
+    }
+
+    try {
+        const response = await axios.post(`${NIMBUS_BASE_URL}/courier/serviceability`, data, {
+            headers: {
+                'Authorization': `Bearer ${cachedToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 401) {
+            await login();
+            return checkServiceability(data);
+        }
+        console.error('❌ Nimbus Serviceability Error:', error.response?.data || error.message);
         throw error;
     }
 }
@@ -101,5 +114,6 @@ async function createShipment(orderData) {
 module.exports = {
     login,
     trackShipment,
-    createShipment
+    createShipment,
+    checkServiceability
 };

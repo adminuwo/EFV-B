@@ -47,13 +47,13 @@
     "userId": "admin_user_001",
     "productId": "efv_v1_ebook",
     "type": "EBOOK",
-    "lastPage": 1,
-    "totalPages": 1,
-    "lastUpdated": 1772016667007,
+    "lastPage": 10,
+    "totalPages": 196,
+    "lastUpdated": 1772189689770,
     "_id": "mlry9un97u4whufv6d5",
     "createdAt": "2026-02-18T11:29:52.485Z",
-    "updatedAt": "2026-02-25T10:51:07.008Z",
-    "progress": 100
+    "updatedAt": "2026-02-27T10:54:49.771Z",
+    "progress": 5.1020408163265305
   },
   {
     "userId": "mlt058axclnz799ag4q",
@@ -71,13 +71,12 @@
     "userId": "mlt058axclnz799ag4q",
     "productId": "efv_v1_ebook",
     "type": "EBOOK",
-    "progress": 100,
     "lastPage": 1,
-    "totalPages": 1,
-    "lastUpdated": 1771910453111,
+    "totalPages": 196,
+    "lastUpdated": 1772194451864,
     "_id": "mlt23g9zs92xaaqxnk",
     "createdAt": "2026-02-19T06:04:38.567Z",
-    "updatedAt": "2026-02-24T05:20:53.113Z"
+    "updatedAt": "2026-02-27T12:14:11.866Z"
   },
   {
     "userId": "mlrnq3u492vak53seqk",

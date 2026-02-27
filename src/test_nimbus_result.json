@@ -1,0 +1,11 @@
+{
+  "logs": [
+    "--- Testing /shipments endpoint ---",
+    "📦 Calling createShipment()..."
+  ],
+  "result": {
+    "status": false,
+    "message": "Support email and phone number on the shipping label must be provided and OTP-verified to proceed."
+  },
+  "error": null
+}

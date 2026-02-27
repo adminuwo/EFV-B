@@ -4,6 +4,7 @@ const { Order, Product, User, DigitalLibrary } = require('../models');
 const adminAuth = require('../middleware/adminAuth');
 const { protect } = require('../middleware/auth');
 const { createRazorpayOrder, verifyPaymentSignature } = require('../utils/razorpay');
+const path = require('path');
 
 
 // Get current user's orders
@@ -12,11 +13,14 @@ router.get('/my-orders', protect, async (req, res) => {
         const query = {
             $or: [
                 { userId: req.user._id },
-                { "customer.email": req.user.email }
+                { "customer.email": new RegExp('^' + req.user.email + '$', 'i') }
             ]
         };
         const orders = await Order.find(query);
-        // Sort manually if JsonAdapter doesn't support complex sorts
+        const logMsg = `[${new Date().toISOString()}] User ${req.user.email} requested orders. Found: ${orders.length}\n`;
+        require('fs').appendFileSync(path.join(__dirname, '..', 'data', 'orders_debug.log'), logMsg);
+
+        // Sort manually
         const sortedOrders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         res.json(sortedOrders);
     } catch (error) {
@@ -248,6 +252,89 @@ router.post('/verify', protect, async (req, res) => {
             console.error('Purchase notification error:', noteErr);
         }
 
+        // 🚛 Phase 2: Create Nimbus Shipment for Physical Items
+        const physicalItems = orderItems.filter(i => i.type === 'HARDCOVER' || i.type === 'PAPERBACK');
+        if (physicalItems.length > 0) {
+            try {
+                const nimbusPostService = require('../services/nimbusPostService');
+                const { Shipment } = require('../models');
+
+                // Improved Name Split
+                const firstName = (address.fullName || user.name || 'Customer').split(' ')[0];
+                const lastName = (address.fullName || user.name || '').split(' ').slice(1).join(' ') || '.';
+
+                // Prepare Nimbus Payload (Updated to match required keys)
+                const nimbusPayload = {
+                    order_number: newOrder.orderId,
+                    consignee_name: address.fullName || user.name || 'Customer',
+                    consignee_email: address.email || user.email,
+                    consignee_phone: address.phone || user.phone || '0000000000',
+                    consignee_address: address.house || address.street || address.fullAddress || '',
+                    consignee_city: address.city || 'Unknown',
+                    consignee_state: address.state || 'Unknown',
+                    consignee_pincode: address.pincode || address.zip || '000000',
+                    consignee_country: 'India',
+
+                    // Warehouse / Pickup details (Required)
+                    pickup_warehouse_name: "Office",
+                    pickup_contact_name: "Abha",
+                    pickup_phone: "0000000000",
+                    pickup_address: "Jabalpur",
+                    pickup_city: "Jabalpur",
+                    pickup_state: "Madhya Pradesh",
+                    pickup_pincode: "482001",
+
+                    order_items: physicalItems.map(i => ({
+                        name: i.title,
+                        qty: i.quantity,
+                        price: i.price,
+                        sku: i.productId.toString()
+                    })),
+                    payment_type: 'prepaid',
+                    order_total: newOrder.totalAmount,
+                    weight: physicalItems.reduce((sum, i) => sum + (i.weight || 500) * i.quantity, 0),
+                    length: 10,
+                    breadth: 10,
+                    height: 10
+                };
+
+                console.log('📦 Auto Nimbus Shipment Payload:', JSON.stringify(nimbusPayload, null, 2));
+                const nimbusResult = await nimbusPostService.createShipment(nimbusPayload);
+                console.log('📄 Auto Nimbus API Result:', JSON.stringify(nimbusResult, null, 2));
+
+                if (nimbusResult.status && nimbusResult.data) {
+                    const shipInfo = nimbusResult.data;
+                    const shipment = await Shipment.create({
+                        orderId: newOrder._id.toString(),
+                        shipmentId: shipInfo.shipment_id || '',
+                        awbNumber: shipInfo.awb_number || '',
+                        courierName: shipInfo.courier_name || 'NimbusPost',
+                        shippingStatus: 'Processing',
+                        trackingLink: shipInfo.tracking_url || ''
+                    });
+
+                    newOrder.shipmentId = shipment.shipmentId;
+                    newOrder.awbNumber = shipment.awbNumber;
+                    newOrder.courierName = shipment.courierName;
+                    newOrder.trackingLink = shipment.trackingLink;
+                    newOrder.status = 'Processing';
+                    newOrder.timeline.push({ status: 'Processing', note: `Shipment created automatically via NimbusPost (AWB: ${shipment.awbNumber})` });
+                    await newOrder.save();
+
+                    console.log(`✅ Nimbus Shipment Created: ${shipment.awbNumber}`);
+                } else {
+                    console.warn('⚠️ Nimbus Shipment API returned false status:', nimbusResult.message);
+                    newOrder.timeline.push({ status: 'Payment Verified', note: 'Auto-shipment failed: ' + (nimbusResult.message || 'Unknown error') });
+                    await newOrder.save();
+                }
+            } catch (shipErr) {
+                console.error('❌ Automatic Nimbus Shipment Failed:', shipErr.message);
+                // We don't fail the order, just record the issue in timeline
+                newOrder.timeline.push({ status: 'Payment Verified', note: 'Auto-shipment system error: ' + shipErr.message });
+                await newOrder.save();
+            }
+        }
+
         res.status(201).json({
             success: true,
             order: newOrder,
@@ -287,8 +374,29 @@ router.get('/track/:id', async (req, res) => {
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
-        res.json(order);
+
+        // Convert to POJO to merge data safely
+        const orderObj = order.toObject ? order.toObject() : JSON.parse(JSON.stringify(order));
+
+        // If shipment fields are missing, try to find in Shipment collection
+        if (!orderObj.awbNumber) {
+            try {
+                const { Shipment } = require('../models');
+                const shipment = await Shipment.findOne({ orderId: order._id.toString() });
+                if (shipment) {
+                    orderObj.awbNumber = shipment.awbNumber;
+                    orderObj.courierName = shipment.courierName;
+                    orderObj.trackingLink = shipment.trackingLink;
+                    orderObj.shipmentId = shipment.shipmentId;
+                }
+            } catch (shipErr) {
+                console.warn('Shipment lookup fail during track:', shipErr.message);
+            }
+        }
+
+        res.json(orderObj);
     } catch (error) {
+        console.error('Track Error:', error);
         res.status(500).json({ message: 'Error tracking order' });
     }
 });

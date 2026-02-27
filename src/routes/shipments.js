@@ -61,46 +61,55 @@ router.post('/create', adminAuth, async (req, res) => {
             return res.status(404).json({ message: 'Order not found' });
         }
 
-        // Prepare NimbusPost Payload
+        // Helper to extract address string from both object and string formats
+        const getAddressString = (addr) => {
+            if (typeof addr === 'string') return addr;
+            if (typeof addr === 'object' && addr !== null) {
+                return [addr.house, addr.area, addr.street, addr.landmark]
+                    .filter(Boolean)
+                    .join(', ');
+            }
+            return '';
+        };
+
+        // Prepare NimbusPost Payload (Updated to match required keys)
         const payload = {
             order_number: order.orderId,
-            shipping_address: {
-                first_name: order.customer.name.split(' ')[0],
-                last_name: order.customer.name.split(' ').slice(1).join(' ') || '.',
-                email: order.customer.email,
-                phone: order.customer.phone || '0000000000',
-                address: order.customer.address || '',
-                city: order.customer.city || 'Unknown',
-                state: order.customer.state || 'Unknown',
-                pincode: order.customer.zip || '000000',
-                country: 'India'
-            },
-            billing_address: {
-                first_name: order.customer.name.split(' ')[0],
-                last_name: order.customer.name.split(' ').slice(1).join(' ') || '.',
-                email: order.customer.email,
-                phone: order.customer.phone || '0000000000',
-                address: order.customer.address || '',
-                city: order.customer.city || 'Unknown',
-                state: order.customer.state || 'Unknown',
-                pincode: order.customer.zip || '000000',
-                country: 'India'
-            },
+            consignee_name: order.customer.name,
+            consignee_email: order.customer.email,
+            consignee_phone: order.customer.phone || '0000000000',
+            consignee_address: getAddressString(order.customer.address),
+            consignee_city: order.customer.city || order.customer.address?.city || 'Unknown',
+            consignee_state: order.customer.state || order.customer.address?.state || 'Unknown',
+            consignee_pincode: order.customer.zip || order.customer.address?.pincode || '000000',
+            consignee_country: 'India',
+
+            // Warehouse / Pickup details (Required)
+            pickup_warehouse_name: "Office",
+            pickup_contact_name: "Abha",
+            pickup_phone: "0000000000",
+            pickup_address: "Jabalpur",
+            pickup_city: "Jabalpur",
+            pickup_state: "Madhya Pradesh",
+            pickup_pincode: "482001",
+
             order_items: order.items.map(item => ({
                 name: item.title,
                 qty: item.quantity,
                 price: item.price,
                 sku: item.productId?.title || item.title
             })),
-            payment_method: order.paymentMethod.toLowerCase() === 'cod' ? 'cod' : 'prepaid',
-            total_amount: order.totalAmount,
+            payment_type: order.paymentMethod.toLowerCase() === 'cod' ? 'cod' : 'prepaid',
+            order_total: order.totalAmount,
             weight: order.items.reduce((sum, item) => sum + (item.productId?.weight || 500) * item.quantity, 0),
             length: 10,
             breadth: 10,
             height: 10
         };
 
+        console.log('📦 Manual Nimbus Shipment Payload:', JSON.stringify(payload, null, 2));
         const result = await nimbusPostService.createShipment(payload);
+        console.log('📄 Manual Nimbus API Result:', JSON.stringify(result, null, 2));
 
         if (result.status && result.data) {
             // Create shipment record
@@ -126,6 +135,38 @@ router.post('/create', adminAuth, async (req, res) => {
     } catch (error) {
         console.error('Create Shipment Error:', error);
         res.status(500).json({ message: error.message || 'Server error during shipment creation' });
+    }
+});
+
+/**
+ * @route   GET /api/shipments/sync/:id
+ * @desc    Sync shipment status with NimbusPost
+ * @access  Admin Only
+ */
+router.get('/sync/:id', adminAuth, async (req, res) => {
+    try {
+        const shipment = await Shipment.findById(req.params.id);
+        if (!shipment || !shipment.awbNumber) {
+            return res.status(404).json({ message: 'Shipment or AWB not found' });
+        }
+
+        const tracking = await nimbusPostService.trackShipment(shipment.awbNumber);
+        if (tracking.status && tracking.data) {
+            const newStatus = tracking.data.status_name || shipment.shippingStatus;
+            shipment.shippingStatus = newStatus;
+            await shipment.save();
+
+            // Update Order as well
+            const order = await Order.findById(shipment.orderId);
+            if (order && order.status !== newStatus) {
+                order.status = newStatus;
+                order.timeline.push({ status: newStatus, note: 'Status synced with NimbusPost' });
+                await order.save();
+            }
+        }
+        res.json({ success: true, shipment });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 

@@ -1,8 +1,12 @@
+require("dotenv").config();
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-
+const generateNimbusToken = require("./routes/nimbusToken");
+// const nimbusShipping = require("./routes/nimbusShipping");
+const nimbusShipping = require("./routes/nimbusShipping").default || require("./routes/nimbusShipping");
 // Load .env from parent directory (EFV-Backend/.env)
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const connectDB = require('./config/db');
@@ -25,7 +29,7 @@ app.use(express.json());
 
 // Serve Frontend Static Files
 const frontendPath = path.join(__dirname, '..', '..', 'efvf', 'public');
-app.use(express.static(frontendPath));
+// app.use(express.static(frontendPath));
 
 // In-memory storage for demo mode (no MongoDB required)
 global.demoUsers = new Map(); // email -> { name, email, library: [] }
@@ -62,17 +66,33 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/shipments', require('./routes/shipments'));
 app.use('/api/coupons', require('./routes/coupons'));
 app.use('/api/support', require('./routes/support'));
+// app.use("/api/shipping", nimbusShipping);
+app.use("/api/nimbus", nimbusShipping);
+app.use(express.static(frontendPath));
+
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Fallback to index.html for any other routes (to support SPA if needed, but here mainly for the root)
-app.get('*', (req, res, next) => {
-    // If it's an API route, don't serve index.html
-    if (req.url.startsWith('/api/')) {
-        return next();
-    }
+
+// IMPORTANT: skip SPA fallback for API routes
+app.use('/api', (req, res, next) => next());
+// app.get('*', (req, res, next) => {
+//     // If it's an API route, don't serve index.html
+//     if (req.url.startsWith('/api/')) {
+//         return next();
+//     }
+//     res.sendFile(path.join(frontendPath, 'index.html'));
+// });
+
+
+app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
-});
+});   
+
+
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -82,6 +102,12 @@ app.use((err, req, res, next) => {
         error: process.env.NODE_ENV === 'development' ? err : {}
     });
 });
+
+// Nimbus token generate at server start
+generateNimbusToken();
+
+// auto refresh token every 12 hours
+setInterval(generateNimbusToken, 1000 * 60 * 60 * 12);
 
 const PORT = process.env.PORT || 8080;
 

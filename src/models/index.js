@@ -135,7 +135,10 @@ const orderSchema = new mongoose.Schema({
     razorpayPaymentId: String,
     razorpaySignature: String,
     invoicePath: String, // Path to generated PDF invoice
-    shipmentId: String, // Shiprocket Shipment ID
+    shipmentId: String, // Shiprocket/Nimbus Shipment ID
+    awbNumber: String,
+    courierName: String,
+    trackingLink: String,
     timeline: [{
         status: String,
         timestamp: { type: Date, default: Date.now },
