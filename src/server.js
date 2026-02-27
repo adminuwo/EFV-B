@@ -23,15 +23,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Google Cloud Root Route (Verification)
-app.get('/', (req, res) => {
-    res.send(`<h1>EFV Backend Active</h1><p>Status: Healthy</p><p>Version: 1.2.0</p>`);
-});
-
-// Health Check for Cloud Deployment (Render/Railway/AWS/GCP)
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'active', uptime: process.uptime() });
-});
+// Serve Frontend Static Files
+const frontendPath = path.join(__dirname, '..', '..', 'efvf', 'public');
+app.use(express.static(frontendPath));
 
 // In-memory storage for demo mode (no MongoDB required)
 global.demoUsers = new Map(); // email -> { name, email, library: [] }
@@ -71,6 +65,15 @@ app.use('/api/support', require('./routes/support'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Fallback to index.html for any other routes (to support SPA if needed, but here mainly for the root)
+app.get('*', (req, res, next) => {
+    // If it's an API route, don't serve index.html
+    if (req.url.startsWith('/api/')) {
+        return next();
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
@@ -82,12 +85,9 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8080;
 
-app.get("/", (req,res) => {
-    res.send("EFV Backend Active");
- });
- 
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
+    console.log(`📁 Serving frontend from: ${frontendPath}`);
 });
 
 

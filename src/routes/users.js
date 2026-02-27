@@ -19,9 +19,28 @@ router.get('/profile', protect, async (req, res) => {
         }
 
         // Create a copy to modify for response
-        // JsonAdapter objects don't have toObject(), they are just objects.
         const userObj = { ...user };
         delete userObj.password;
+
+        // Ensure notifications have IDs for frontend tracking
+        let changed = false;
+        if (userObj.notifications) {
+            userObj.notifications.forEach(note => {
+                if (!note._id && !note.id) {
+                    note._id = 'note-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+                    changed = true;
+                }
+            });
+        }
+
+        if (changed) {
+            // Re-fetch the real user object to save IDs permanently
+            const realUser = await User.findById(req.user._id);
+            if (realUser) {
+                realUser.notifications = userObj.notifications;
+                await realUser.save();
+            }
+        }
 
         res.json(userObj);
 
@@ -190,19 +209,24 @@ router.delete('/notifications/:id', protect, async (req, res) => {
         const user = await User.findById(req.user._id);
 
         const initialCount = user.notifications.length;
-        // Robust filtering: handle both hyphen and underscore variations
+        const reqId = req.params.id;
+
+        // Robust filtering: handle missing IDs and variations
         user.notifications = user.notifications.filter(n => {
-            const dbId = (n._id || n.id).toString();
-            const reqId = req.params.id;
+            const rawId = n._id || n.id;
+            if (!rawId) return true; // Keep notifications without IDs (they can't be the target)
+
+            const dbId = rawId.toString();
             return dbId !== reqId &&
                 dbId.replace(/-/g, '_') !== reqId &&
                 dbId.replace(/_/g, '-') !== reqId;
         });
 
         if (user.notifications.length === initialCount) {
-            console.warn(`⚠️ Notification ${req.params.id} not found in user's list`);
+            console.warn(`⚠️ Notification ${reqId} not found in user's list`);
+            return res.status(404).json({ message: 'Notification not found' });
         } else {
-            console.log(`✅ Notification ${req.params.id} removed successfully`);
+            console.log(`✅ Notification ${reqId} removed successfully`);
         }
 
         await user.save();
