@@ -36,10 +36,21 @@
     "password": "$2a$10$fSqcc2xdtTLQwkosRflvQerBf3mZ3d4mmgxzR22755ikTB2aIRN1W",
     "_id": "mlrnq3u492vak53seqk",
     "createdAt": "2026-02-18T06:34:35.116Z",
-    "updatedAt": "2026-02-27T09:04:21.643Z",
+    "updatedAt": "2026-02-27T12:35:22.714Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
-    "resetAttempts": null
+    "resetAttempts": null,
+    "notifications": [
+      {
+        "_id": "purchase-1772195722712",
+        "title": "Purchase Successful! 🎉",
+        "message": "Thank you for your order ORD-722704794. Your items are being processed.",
+        "type": "Order",
+        "link": "profile.html?tab=orders",
+        "isRead": false,
+        "createdAt": "2026-02-27T12:35:22.712Z"
+      }
+    ]
   },
   {
     "name": "neha",

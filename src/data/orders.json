@@ -125,5 +125,53 @@
     "_id": "order_manual_sync_aditi",
     "createdAt": "2026-02-27T12:00:00.000Z",
     "updatedAt": "2026-02-27T12:00:00.000Z"
+  },
+  {
+    "orderId": "ORD-722704794",
+    "userId": "mlrnq3u492vak53seqk",
+    "customer": {
+      "name": "abha",
+      "email": "abha@uwo24.com",
+      "phone": "0000000000",
+      "address": {
+        "fullName": "abha",
+        "email": "abha@uwo24.com",
+        "phone": "0000000000",
+        "house": "sadar cantt, sadar, jabalpur, 482002",
+        "city": "Unknown",
+        "pincode": "000000"
+      },
+      "city": "Unknown",
+      "zip": "000000"
+    },
+    "items": [
+      {
+        "productId": "efv_v1_hardcover",
+        "title": "EFV™ VOL 1: ORIGIN CODE™",
+        "type": "HARDCOVER",
+        "price": 1,
+        "quantity": 1
+      }
+    ],
+    "totalAmount": 1,
+    "paymentMethod": "Razorpay",
+    "paymentStatus": "Paid",
+    "status": "Processing",
+    "razorpayOrderId": "order_SLAhB9BRrQPxUN",
+    "razorpayPaymentId": "pay_SLAiX2xK7mcxCb",
+    "razorpaySignature": "6994d2f045ddf54d4b1a70c6f4446d30cbcd67ad8f4d6f24b9fc86457b86f1f9",
+    "timeline": [
+      {
+        "status": "Paid",
+        "note": "Payment verified via Razorpay"
+      },
+      {
+        "status": "Payment Verified",
+        "note": "Auto-shipment failed: Consignee name is required\nConsignee Address is required\nConsignee City is required\nConsignee State is required\nConsignee Pincode is required\nConsignee Phone is required\nOrder Total is required\nPickup Warehouse Name is required\nPickup Contact Name is required\nPickup Address is required\nPickup City is required\nPickup State is required\nPickup Pincode is required\nPickup Phone is required\n"
+      }
+    ],
+    "_id": "mm4vkr81wgw4nst436e",
+    "createdAt": "2026-02-27T12:35:22.705Z",
+    "updatedAt": "2026-02-27T12:35:23.289Z"
   }
 ]
