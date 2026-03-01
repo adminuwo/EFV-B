@@ -90,31 +90,9 @@ router.get('/my-library', protect, async (req, res) => {
 
         let library = Array.from(libraryMap.values());
 
-        // Fallback: If library is still empty, sync from purchases (Legacy Support)
-        if (library.length === 0) {
-            const purchases = await Purchase.find({ userId: req.user._id }).populate('productId');
-            const legacyItems = purchases.map(p => {
-                const product = p.productId;
-                if (!product || (product.type !== 'EBOOK' && product.type !== 'AUDIOBOOK')) return null;
-                return {
-                    productId: product._id,
-                    title: product.title,
-                    type: product.type === 'AUDIOBOOK' ? 'Audiobook' : 'E-Book',
-                    thumbnail: product.thumbnail,
-                    filePath: product.filePath,
-                    purchasedAt: p.purchaseDate
-                };
-            }).filter(i => i !== null);
-
-            if (legacyItems.length > 0) {
-                const newLibrary = new DigitalLibrary({
-                    userId: req.user._id,
-                    items: legacyItems
-                });
-                await newLibrary.save();
-                return res.json(legacyItems);
-            }
-        }
+        // NOTE: Legacy fallback removed intentionally.
+        // Previously, if library was empty it re-synced from purchases — this caused deleted
+        // items to reappear. Now, an empty library = user has no items. That's correct behavior.
 
         // Sort by purchasedAt descending (Latest First)
         library.sort((a, b) => new Date(b.purchasedAt || 0) - new Date(a.purchasedAt || 0));
@@ -231,6 +209,41 @@ router.post('/add', protect, async (req, res) => {
     } catch (error) {
         console.error('Error adding to library:', error);
         res.status(500).json({ message: 'Error adding to library' });
+    }
+});
+
+// DELETE item from user's digital library (permanent ATOMIC)
+router.delete('/my-library/:productId', protect, async (req, res) => {
+    try {
+        const userId = req.user._id.toString();
+        const { productId } = req.params;
+
+        console.log(`🗑️ ATOMIC LIBRARY REMOVE: ${productId} for ${userId}`);
+
+        const updatedLib = await DigitalLibrary.findOneAndUpdate(
+            { userId },
+            (lib) => {
+                if (!lib || !lib.items) return lib;
+                const initialCount = lib.items.length;
+                lib.items = lib.items.filter(item => {
+                    const id = (item.productId || item._id || item.id || '').toString();
+                    return id !== productId.toString();
+                });
+                lib._lastStatus = (lib.items.length < initialCount) ? 'SUCCESS' : 'NOT_FOUND';
+                lib.updatedAt = new Date().toISOString();
+                return lib;
+            }
+        );
+
+        if (!updatedLib || updatedLib._lastStatus === 'NOT_FOUND') {
+            return res.status(404).json({ message: 'Item not found in library' });
+        }
+
+        console.log(`✅ ATOMIC LIBRARY REMOVE SUCCESS: ${productId}`);
+        res.json({ message: 'Item removed from library', library: updatedLib });
+    } catch (error) {
+        console.error('Error removing from library:', error);
+        res.status(500).json({ message: 'Error removing from library' });
     }
 });
 

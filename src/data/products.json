@@ -4,7 +4,7 @@
     "title": "EFV™ VOL 1: ORIGIN CODE™",
     "subtitle": "Hardcover Edition",
     "type": "HARDCOVER",
-    "price": 1,
+    "price": 499,
     "thumbnail": "img/vol1-cover.png",
     "category": "Digital",
     "description": "Learn the secrets of Energy and Alignment. Premium hardcover book.",
@@ -18,7 +18,7 @@
     "breadth": 0,
     "height": 0,
     "duration": "",
-    "updatedAt": "2026-02-27T08:59:52.421Z"
+    "updatedAt": "2026-03-01T09:28:15.139Z"
   },
   {
     "_id": "efv_v1_paperback",
@@ -44,8 +44,8 @@
     "description": "The complete digital version of Volume 1. Accessible on all devices.",
     "stock": 9999,
     "volume": "1",
-    "language": "Hindi",
-    "filePath": "uploads/ebooks/ebook-1772189648652-873806513-efv__hindi_manuscript_volume_1.pdf",
+    "language": "English",
+    "filePath": "uploads/ebooks/ebook-1772357551801-955767933-efv_canon_volume_1___the_origin_code____final__28.02.26__colour.pdf",
     "author": "",
     "discountPrice": null,
     "weight": 0,
@@ -53,7 +53,7 @@
     "breadth": 0,
     "height": 0,
     "duration": "",
-    "updatedAt": "2026-02-27T10:54:08.762Z"
+    "updatedAt": "2026-03-01T09:32:31.918Z"
   },
   {
     "_id": "efv_v1_audiobook",
@@ -67,7 +67,133 @@
     "stock": 9999,
     "volume": "1",
     "language": "Hindi",
-    "filePath": "uploads/audios/audio-1772016629857-997915344-whatsapp_audio_2026_02_25_at_16.19.04__1_.mpeg"
+    "filePath": "uploads/audios/chapter_0-1772336833096-347131271-chp_1_vol_1.m4a",
+    "author": "",
+    "discountPrice": null,
+    "weight": 0,
+    "length": 0,
+    "breadth": 0,
+    "height": 0,
+    "duration": "",
+    "totalChapters": 23,
+    "chapters": [
+      {
+        "chapterNumber": 1,
+        "title": "Chapter 1",
+        "filePath": "uploads/audios/chapter_0-1772336833096-347131271-chp_1_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 2,
+        "title": "Chapter 2",
+        "filePath": "uploads/audios/chapter_1-1772336834508-966930659-chp_2_vol_1__1_.m4a"
+      },
+      {
+        "chapterNumber": 3,
+        "title": "Chapter 3",
+        "filePath": "uploads/audios/chapter_2-1772336835855-264818898-chp_3_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 4,
+        "title": "Chapter 4",
+        "filePath": "uploads/audios/chapter_3-1772336837207-487692688-chp_4_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 5,
+        "title": "Chapter 5",
+        "filePath": "uploads/audios/chapter_4-1772336838608-965984080-chp_5_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 6,
+        "title": "Chapter 6",
+        "filePath": "uploads/audios/chapter_5-1772336839946-135318954-chp_6_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 7,
+        "title": "Chapter 7",
+        "filePath": "uploads/audios/chapter_6-1772336841358-176561829-chp_7_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 8,
+        "title": "Chapter 8",
+        "filePath": "uploads/audios/chapter_7-1772336842776-68675651-chp_8_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 9,
+        "title": "Chapter 9",
+        "filePath": "uploads/audios/chapter_8-1772336844159-346574711-chp_9_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 10,
+        "title": "Chapter 10",
+        "filePath": "uploads/audios/chapter_9-1772336845288-15124952-chp_10_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 11,
+        "title": "Chapter 11",
+        "filePath": "uploads/audios/chapter_10-1772336846445-100730093-chp_11_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 12,
+        "title": "Chapter 12",
+        "filePath": "uploads/audios/chapter_11-1772336847779-769503459-chp_12_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 13,
+        "title": "Chapter 13",
+        "filePath": "uploads/audios/chapter_12-1772336848899-435379231-chp_13_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 14,
+        "title": "Chapter 14",
+        "filePath": "uploads/audios/chapter_13-1772336850280-826606806-chp_14_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 15,
+        "title": "Chapter 15",
+        "filePath": "uploads/audios/chapter_14-1772336851248-301428907-chp_15_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 16,
+        "title": "Chapter 16",
+        "filePath": "uploads/audios/chapter_15-1772336852371-230177956-chp_16_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 17,
+        "title": "Chapter 17",
+        "filePath": "uploads/audios/chapter_16-1772336853249-533601284-chp_17_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 18,
+        "title": "Chapter 18",
+        "filePath": "uploads/audios/chapter_17-1772336854674-129016230-chp_18_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 19,
+        "title": "Chapter 19",
+        "filePath": "uploads/audios/chapter_18-1772336855922-219958373-chp_19_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 20,
+        "title": "Chapter 20",
+        "filePath": "uploads/audios/chapter_19-1772336856967-424126203-chp_20_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 21,
+        "title": "Chapter 21",
+        "filePath": "uploads/audios/chapter_20-1772336858642-93739183-chp_21_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 22,
+        "title": "Chapter 22",
+        "filePath": "uploads/audios/chapter_21-1772336860451-303927924-chp_22_vol_1.m4a"
+      },
+      {
+        "chapterNumber": 23,
+        "title": "Chapter 23",
+        "filePath": "uploads/audios/chapter_22-1772336861967-450263877-chp_23_vol_1.m4a"
+      }
+    ],
+    "updatedAt": "2026-03-01T09:28:26.749Z"
   },
   {
     "_id": "efv_v1_hardcover_en",
@@ -114,7 +240,16 @@
     "description": "The complete English digital version of Volume 1.",
     "stock": 9999,
     "volume": "1",
-    "language": "English"
+    "language": "English",
+    "author": "",
+    "discountPrice": null,
+    "weight": 0,
+    "length": 0,
+    "breadth": 0,
+    "height": 0,
+    "duration": "",
+    "filePath": "uploads/ebooks/ebook-1772357563351-660406593-efv__hindi_manuscript_volume_1__1_.pdf",
+    "updatedAt": "2026-03-01T09:32:43.498Z"
   },
   {
     "_id": "efv_v1_audiobook_en",

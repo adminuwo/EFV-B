@@ -34,9 +34,9 @@
     "status": "Resolved",
     "_id": "mm3aajioxio8aa8dib",
     "createdAt": "2026-02-26T09:51:48.050Z",
-    "updatedAt": "2026-02-26T09:52:13.541Z",
-    "reply": "hello",
-    "repliedAt": "2026-02-26T09:52:13.540Z"
+    "updatedAt": "2026-03-01T06:19:57.474Z",
+    "reply": "hello okk",
+    "repliedAt": "2026-03-01T06:19:57.473Z"
   },
   {
     "userId": null,
@@ -74,5 +74,16 @@
     "updatedAt": "2026-02-26T16:13:06.112Z",
     "reply": "okkk",
     "repliedAt": "2026-02-26T16:13:06.111Z"
+  },
+  {
+    "userId": "mlt058axclnz799ag4q",
+    "name": "Aditi",
+    "email": "aditi@uwo24.com",
+    "subject": "monday ",
+    "message": "today is monday",
+    "status": "Open",
+    "_id": "mm7d151iyxmyyrdk45r",
+    "createdAt": "2026-03-01T06:19:32.934Z",
+    "updatedAt": "2026-03-01T06:19:32.934Z"
   }
 ]

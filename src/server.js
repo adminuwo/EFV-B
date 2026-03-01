@@ -66,6 +66,7 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/shipments', require('./routes/shipments'));
 app.use('/api/coupons', require('./routes/coupons'));
 app.use('/api/support', require('./routes/support'));
+app.use('/api/audiobook-progress', require('./routes/audiobookProgress'));
 // app.use("/api/shipping", nimbusShipping);
 app.use("/api/nimbus", nimbusShipping);
 app.use(express.static(frontendPath));
@@ -89,7 +90,7 @@ app.use('/api', (req, res, next) => next());
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
-});   
+});
 
 
 

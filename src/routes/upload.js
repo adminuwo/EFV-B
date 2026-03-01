@@ -10,15 +10,12 @@ const fs = require('fs');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const rootDir = path.join(__dirname, '../../');
-        let dest = '';
+        let dest = path.join(rootDir, 'src/uploads/audios'); // Default to audios
+
         if (file.fieldname === 'cover') {
             dest = path.join(rootDir, 'src/uploads/covers');
         } else if (file.fieldname === 'ebook') {
             dest = path.join(rootDir, 'src/uploads/ebooks');
-        } else if (file.fieldname === 'audio') {
-            dest = path.join(rootDir, 'src/uploads/audios');
-        } else {
-            return cb({ message: 'Invalid field name' }, false);
         }
 
         // Ensure directory exists
@@ -28,7 +25,6 @@ const storage = multer.diskStorage({
         cb(null, dest);
     },
     filename: function (req, file, cb) {
-        // Sanitize original name (remove spaces and special chars)
         const safeName = file.originalname.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + '-' + safeName);
@@ -37,77 +33,67 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit
+    limits: { fileSize: 500 * 1024 * 1024 },
     fileFilter: function (req, file, cb) {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const mime = file.mimetype.toLowerCase();
-
-        if (file.fieldname === 'cover') {
-            const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp'];
-            if (allowedExts.includes(ext) || mime.startsWith('image/')) {
-                return cb(null, true);
-            }
-        } else if (file.fieldname === 'ebook') {
-            // Highly permissive document and ebook formats
-            const allowedExts = [
-                '.pdf', '.epub', '.mobi', '.doc', '.docx', '.txt',
-                '.rtf', '.odt', '.html', '.htm', '.azw', '.azw3',
-                '.fb2', '.djvu', '.prc', '.pages'
-            ];
-            if (allowedExts.includes(ext) ||
-                mime.includes('pdf') ||
-                mime.includes('word') ||
-                mime.includes('text') ||
-                mime.includes('epub') ||
-                mime.includes('mobi') ||
-                mime.includes('html') ||
-                mime.includes('document') || // Generic for many office docs
-                mime.startsWith('application/octet-stream') ||
-                mime.startsWith('application/x-')) { // Catch many specialized ebook mime types
-                return cb(null, true);
-            }
-        } else if (file.fieldname === 'audio') {
-            // Highly permissive audio and video containers (since video as audio is common)
-            const allowedExts = [
-                '.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg',
-                '.wma', '.alac', '.opus', '.aiff', '.amr', '.ape',
-                '.mp4', '.mpeg', '.mpg', '.m4v', '.webm', '.mkv', '.avi'
-            ];
-            if (allowedExts.includes(ext) ||
-                mime.startsWith('audio/') ||
-                mime.startsWith('video/') ||
-                mime === 'application/octet-stream') { // Some systems send mp3 as application/octet-stream
-                return cb(null, true);
-            }
-        }
-
-        cb(new Error(`Invalid file type for ${file.fieldname}: ${ext} (${mime})`));
+        cb(null, true); // ALLOW ALL for debugging
     }
 });
 
-// Upload route
-router.post('/', adminAuth, upload.fields([
-    { name: 'cover', maxCount: 1 },
-    { name: 'ebook', maxCount: 1 },
-    { name: 'audio', maxCount: 1 }
-]), (req, res) => {
+// Generate dynamic chapter fields for multer (up to 100 chapters)
+const chapterFields = [];
+for (let i = 0; i < 100; i++) {
+    chapterFields.push({ name: `chapter_${i}`, maxCount: 1 });
+}
+
+// Upload route - handles everything dynamically
+router.post('/', adminAuth, (req, res, next) => {
+    res.setHeader('X-Upload-Version', '2.1'); // For verifying server restart
+    console.log('🚀 [v2.1] Upload Request Started');
+    upload.any()(req, res, (err) => {
+        if (err) {
+            console.error('❌ Multer Error:', err);
+            return res.status(400).json({
+                message: err.code === 'LIMIT_UNEXPECTED_FIELD' ? `Unexpected field: ${err.field}` : (err.message || 'Upload error'),
+                code: err.code
+            });
+        }
+        next();
+    });
+}, (req, res) => {
     try {
-        const files = req.files;
+        console.log('📦 Files received:', req.files ? req.files.length : 0);
+        const files = req.files || [];
         const responseIds = {};
+        const chapterPaths = {};
 
-        if (files.cover) responseIds.coverPath = `uploads/covers/${files.cover[0].filename}`;
-        if (files.ebook) responseIds.ebookPath = `uploads/ebooks/${files.ebook[0].filename}`;
-        if (files.audio) responseIds.audioPath = `uploads/audios/${files.audio[0].filename}`;
+        files.forEach(file => {
+            console.log(`  - Processing field: ${file.fieldname} -> ${file.filename}`);
+            if (file.fieldname === 'cover') {
+                responseIds.coverPath = `uploads/covers/${file.filename}`;
+            } else if (file.fieldname === 'ebook') {
+                responseIds.ebookPath = `uploads/ebooks/${file.filename}`;
+            } else if (file.fieldname === 'audio') {
+                responseIds.audioPath = `uploads/audios/${file.filename}`;
+            } else if (file.fieldname.startsWith('chapter_')) {
+                const index = file.fieldname.split('_')[1];
+                chapterPaths[index] = `uploads/audios/${file.filename}`;
+            }
+        });
 
-        console.log('✅ File Upload Success:', responseIds);
+        if (Object.keys(chapterPaths).length > 0) {
+            responseIds.chapterPaths = chapterPaths;
+        }
+
+        console.log('✅ File Upload Success Mapping:', responseIds);
 
         res.json({
             message: 'Files uploaded successfully',
-            paths: responseIds
+            paths: responseIds,
+            version: '2.1'
         });
     } catch (error) {
-        console.error('❌ Upload error:', error);
-        res.status(500).json({ message: 'File upload failed' });
+        console.error('❌ Route handling error:', error);
+        res.status(500).json({ message: 'File upload processing failed' });
     }
 });
 

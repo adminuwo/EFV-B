@@ -1,0 +1,88 @@
+[
+  {
+    "userId": "mlt058axclnz799ag4q",
+    "productId": "efv_v1_audiobook",
+    "chapters": [
+      {
+        "chapterIndex": 0,
+        "currentTime": 380.090071,
+        "duration": 911.22068,
+        "completed": false,
+        "lastUpdated": 1772338171428
+      },
+      {
+        "chapterIndex": 2,
+        "currentTime": 478.731693,
+        "duration": 879.896961,
+        "completed": false,
+        "lastUpdated": 1772338199415
+      },
+      {
+        "chapterIndex": 4,
+        "currentTime": 3.68899,
+        "duration": 867.288526,
+        "completed": false,
+        "lastUpdated": 1772339598789
+      },
+      {
+        "chapterIndex": 17,
+        "currentTime": 561.46736,
+        "duration": 792.822132,
+        "completed": false,
+        "lastUpdated": 1772339742334
+      },
+      {
+        "chapterIndex": 18,
+        "currentTime": 1.425748,
+        "duration": 683.943764,
+        "completed": false,
+        "lastUpdated": 1772339627141
+      },
+      {
+        "chapterIndex": 16,
+        "currentTime": 2.164117,
+        "duration": 1067.932154,
+        "completed": false
+      },
+      {
+        "chapterIndex": 5,
+        "currentTime": 36.581266,
+        "duration": 895.129252,
+        "completed": false,
+        "lastUpdated": 1772346206156
+      },
+      {
+        "chapterIndex": 6,
+        "currentTime": 0.980837,
+        "duration": 837.729524,
+        "completed": false
+      },
+      {
+        "chapterIndex": 7,
+        "currentTime": 0.597497,
+        "duration": 989.727347,
+        "completed": false
+      },
+      {
+        "chapterIndex": 9,
+        "currentTime": 1.466725,
+        "duration": 890.090522,
+        "completed": false
+      },
+      {
+        "chapterIndex": 10,
+        "currentTime": 12.793226,
+        "duration": 1006.468934,
+        "completed": false,
+        "lastUpdated": 1772357048020
+      }
+    ],
+    "currentChapterIndex": 10,
+    "currentChapterTime": 12.793226,
+    "totalCompletedChapters": 0,
+    "lastUpdated": 1772357048020,
+    "_id": "mm78cr205g7q3c7jub",
+    "createdAt": "2026-03-01T04:08:36.600Z",
+    "updatedAt": "2026-03-01T09:24:08.021Z"
+  }
+]

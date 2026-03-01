@@ -32,7 +32,8 @@ router.post('/', adminAuth, async (req, res) => {
         const {
             title, author, price, discountPrice, type, filePath,
             description, thumbnail, gallery, stock, discount,
-            category, language, volume, weight, length, breadth, height, duration
+            category, language, volume, weight, length, breadth, height, duration,
+            totalChapters, chapters
         } = req.body;
 
         if (!title || !price || !type) {
@@ -42,7 +43,8 @@ router.post('/', adminAuth, async (req, res) => {
         const product = await Product.create({
             title, author, price, discountPrice, type, filePath,
             description, thumbnail, gallery, stock, discount,
-            category, language, volume, weight, length, breadth, height, duration
+            category, language, volume, weight, length, breadth, height, duration,
+            totalChapters, chapters
         });
 
         console.log('📝 Created Product to DB:', product._id);
@@ -73,6 +75,7 @@ router.post('/', adminAuth, async (req, res) => {
             }
         }
 
+        /* 
         // 🔔 Broadcase Notification to ALL users about the new book
         try {
             const { User } = require('../models');
@@ -98,6 +101,7 @@ router.post('/', adminAuth, async (req, res) => {
         } catch (noteErr) {
             console.error('Broadcast notification error:', noteErr);
         }
+        */
 
         res.status(201).json(product);
     } catch (error) {

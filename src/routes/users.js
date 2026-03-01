@@ -94,20 +94,21 @@ router.post('/address', protect, async (req, res) => {
 // Update Address
 router.put('/address/:id', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
-        if (!user.savedAddresses) return res.status(404).json({ message: 'No addresses found' });
-
-        const addrIndex = user.savedAddresses.findIndex(a => (a._id || a.id || '').toString() === req.params.id);
-        if (addrIndex === -1) return res.status(404).json({ message: 'Address not found' });
-
-        if (req.body.isDefault) {
-            user.savedAddresses.forEach(a => a.isDefault = false);
-        }
-        const existingAddr = user.savedAddresses[addrIndex];
-        const addrData = typeof existingAddr.toObject === 'function' ? existingAddr.toObject() : existingAddr;
-        user.savedAddresses[addrIndex] = { ...addrData, ...req.body };
-        await user.save();
-        res.json(user.savedAddresses);
+        const addrId = req.params.id;
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, (user) => {
+            if (!user.savedAddresses) user.savedAddresses = [];
+            const index = user.savedAddresses.findIndex(a => (a._id || a.id || '').toString() === addrId);
+            if (index !== -1) {
+                if (req.body.isDefault) {
+                    user.savedAddresses.forEach(a => a.isDefault = false);
+                }
+                const existing = user.savedAddresses[index];
+                user.savedAddresses[index] = { ...existing, ...req.body };
+                user.updatedAt = new Date().toISOString();
+            }
+            return user;
+        });
+        res.json(updatedUser.savedAddresses);
     } catch (error) {
         res.status(500).json({ message: 'Error updating address' });
     }
@@ -116,12 +117,14 @@ router.put('/address/:id', protect, async (req, res) => {
 // Delete Address
 router.delete('/address/:id', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
-        if (!user.savedAddresses) return res.json([]);
-
-        user.savedAddresses = user.savedAddresses.filter(a => (a._id || a.id || '').toString() !== req.params.id);
-        await user.save();
-        res.json(user.savedAddresses);
+        const addrId = req.params.id;
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, (user) => {
+            if (!user.savedAddresses) user.savedAddresses = [];
+            user.savedAddresses = user.savedAddresses.filter(a => (a._id || a.id || '').toString() !== addrId);
+            user.updatedAt = new Date().toISOString();
+            return user;
+        });
+        res.json(updatedUser.savedAddresses);
     } catch (error) {
         res.status(500).json({ message: 'Error deleting address' });
     }
@@ -133,17 +136,18 @@ router.delete('/address/:id', protect, async (req, res) => {
 router.post('/wishlist/toggle', protect, async (req, res) => {
     try {
         const { productId } = req.body;
-        const user = await User.findById(req.user._id);
-        const index = user.wishlist.indexOf(productId);
-        if (index > -1) {
-            user.wishlist.splice(index, 1);
-            await user.save();
-            res.json({ message: 'Removed from wishlist', wishlist: user.wishlist });
-        } else {
-            user.wishlist.push(productId);
-            await user.save();
-            res.json({ message: 'Added to wishlist', wishlist: user.wishlist });
-        }
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, (user) => {
+            if (!user.wishlist) user.wishlist = [];
+            const idx = user.wishlist.indexOf(productId);
+            if (idx > -1) {
+                user.wishlist.splice(idx, 1);
+            } else {
+                user.wishlist.push(productId);
+            }
+            user.updatedAt = new Date().toISOString();
+            return user;
+        });
+        res.json({ message: 'Wishlist updated', wishlist: updatedUser.wishlist });
     } catch (error) {
         res.status(500).json({ message: 'Error toggling wishlist' });
     }
@@ -202,34 +206,41 @@ router.put('/notifications/read-all', protect, async (req, res) => {
     }
 });
 
-// Delete Notification
+// Delete Notification (ATOMIC V2)
 router.delete('/notifications/:id', protect, async (req, res) => {
     try {
-        console.log(`🗑️ Attempting to delete notification: ${req.params.id} for user: ${req.user.email}`);
-        const user = await User.findById(req.user._id);
-
-        const initialCount = user.notifications.length;
         const reqId = req.params.id;
+        console.log(`🗑️ ATOMIC DELETE: ${reqId} for ${req.user.email}`);
 
-        // Robust filtering: handle missing IDs and variations
-        user.notifications = user.notifications.filter(n => {
-            const rawId = n._id || n.id;
-            if (!rawId) return true; // Keep notifications without IDs (they can't be the target)
+        // Perform atomic update inside the file lock
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, (user) => {
+            if (!user.notifications) user.notifications = [];
+            const initialCount = user.notifications.length;
 
-            const dbId = rawId.toString();
-            return dbId !== reqId &&
-                dbId.replace(/-/g, '_') !== reqId &&
-                dbId.replace(/_/g, '-') !== reqId;
+            user.notifications = user.notifications.filter(n => {
+                const rawId = n._id || n.id;
+                if (!rawId) return true;
+                const dbId = rawId.toString();
+                return dbId !== reqId &&
+                    dbId.replace(/-/g, '_') !== reqId &&
+                    dbId.replace(/_/g, '-') !== reqId;
+            });
+
+            if (user.notifications.length === initialCount) {
+                user._lastDeleteStatus = 'NOT_FOUND';
+            } else {
+                user._lastDeleteStatus = 'SUCCESS';
+            }
+            user.updatedAt = new Date().toISOString();
+            return user;
         });
 
-        if (user.notifications.length === initialCount) {
-            console.warn(`⚠️ Notification ${reqId} not found in user's list`);
+        if (updatedUser._lastDeleteStatus === 'NOT_FOUND') {
+            console.warn(`⚠️ Notification ${reqId} not found in DB`);
             return res.status(404).json({ message: 'Notification not found' });
-        } else {
-            console.log(`✅ Notification ${reqId} removed successfully`);
         }
 
-        await user.save();
+        console.log(`✅ ATOMIC DELETE SUCCESS: ${reqId}`);
         res.json({ success: true, message: 'Notification deleted' });
     } catch (error) {
         console.error('Error deleting notification:', error);

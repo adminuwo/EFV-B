@@ -67,6 +67,16 @@ const productSchema = new mongoose.Schema({
     height: { type: Number, default: 0 }, // in cm
     duration: String, // e.g. "12:35" for audiobooks
 
+    // Chapter-Based Audiobook System
+    totalChapters: { type: Number, default: 0 },
+    chapters: [{
+        chapterNumber: { type: Number, required: true },
+        title: { type: String, default: '' },
+        filePath: { type: String, default: '' }, // e.g. uploads/audios/chapter-1.mp3
+        duration: { type: String, default: '' }, // e.g. "12:35"
+        uploadedAt: { type: Date }
+    }],
+
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -92,7 +102,10 @@ const digitalLibrarySchema = new mongoose.Schema({
         filePath: String,
         purchasedAt: { type: Date, default: Date.now },
         progress: { type: Number, default: 0 }, // For reading/listening progress
-        lastAccessed: { type: Date, default: Date.now }
+        lastAccessed: { type: Date, default: Date.now },
+        // Audiobook chapter-level resume
+        lastChapter: { type: Number, default: 0 },
+        lastChapterTime: { type: Number, default: 0 }
     }]
 });
 
@@ -198,6 +211,27 @@ const userProgressSchema = new mongoose.Schema({
     lastUpdated: { type: Date, default: Date.now }
 });
 
+// Chapter-level audiobook progress
+const audiobookProgressSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    // Per-chapter tracking
+    chapters: [{
+        chapterIndex: { type: Number, required: true }, // 0-based index
+        currentTime: { type: Number, default: 0 },   // seconds
+        duration: { type: Number, default: 0 },       // total seconds
+        completed: { type: Boolean, default: false },
+        lastUpdated: { type: Date, default: Date.now }
+    }],
+    // Current position
+    currentChapterIndex: { type: Number, default: 0 },
+    currentChapterTime: { type: Number, default: 0 },
+    totalCompletedChapters: { type: Number, default: 0 },
+    lastUpdated: { type: Date, default: Date.now }
+});
+
+audiobookProgressSchema.index({ userId: 1, productId: 1 }, { unique: true });
+
 const supportSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     name: String,
@@ -220,6 +254,7 @@ module.exports = {
     Cart: mongoose.model('Cart', cartSchema),
     DigitalLibrary: mongoose.model('DigitalLibrary', digitalLibrarySchema),
     UserProgress: mongoose.model('UserProgress', userProgressSchema),
+    AudiobookProgress: mongoose.model('AudiobookProgress', audiobookProgressSchema),
     Payment: mongoose.model('Payment', paymentSchema),
     Shipment: mongoose.model('Shipment', shipmentSchema),
     Coupon: mongoose.model('Coupon', couponSchema),

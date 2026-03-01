@@ -75,14 +75,46 @@ router.post('/', async (req, res) => {
             });
         }
 
+        // Link to user if possible (even if guest has account)
+        let userId = null;
+        try {
+            const potentialUser = await User.findOne({ email: customer.email });
+            if (potentialUser) {
+                userId = potentialUser._id;
+            }
+        } catch (e) { }
+
         const newOrder = await Order.create({
             orderId: 'ORD-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 1000),
+            userId: userId,
             customer,
             items: orderItems,
             totalAmount: Math.round(totalAmount),
             paymentMethod: paymentMethod || 'COD',
             timeline: [{ status: 'Pending', note: 'Order placed successfully' }]
         });
+
+        // 🔔 Add Purchase Notification (Private)
+        if (userId) {
+            try {
+                await User.findByIdAndUpdate(userId, (u) => {
+                    if (!u.notifications) u.notifications = [];
+                    u.notifications.unshift({
+                        _id: 'purchase-cod-' + Date.now(),
+                        title: 'Order Placed! 📦',
+                        message: `Wait for confirmation! Your order ${newOrder.orderId} (COD) has been placed.`,
+                        type: 'Order',
+                        link: 'profile.html?tab=orders',
+                        isRead: false,
+                        createdAt: new Date().toISOString()
+                    });
+                    u.updatedAt = new Date().toISOString();
+                    return u;
+                });
+            } catch (noteErr) {
+                console.error('COD notification error:', noteErr);
+            }
+        }
 
         res.status(201).json(newOrder);
 
@@ -219,35 +251,42 @@ router.post('/verify', protect, async (req, res) => {
         }
 
         if (digitalItems.length > 0) {
-            let library = await DigitalLibrary.findOne({ userId: user._id.toString() });
-            if (!library) {
-                library = await DigitalLibrary.create({ userId: user._id.toString(), items: [] });
-            }
-
-            // Add only if not already owned
-            digitalItems.forEach(di => {
-                if (!library.items.some(li => li.productId.toString() === di.productId.toString())) {
-                    library.items.push(di);
-                }
-            });
-
-            await library.save();
+            await DigitalLibrary.findOneAndUpdate(
+                { userId: user._id.toString() },
+                (lib) => {
+                    if (!lib) {
+                        return { userId: user._id.toString(), items: digitalItems, updatedAt: new Date().toISOString() };
+                    }
+                    if (!lib.items) lib.items = [];
+                    digitalItems.forEach(di => {
+                        if (!lib.items.some(li => (li.productId || '').toString() === di.productId.toString())) {
+                            lib.items.push(di);
+                        }
+                    });
+                    lib.updatedAt = new Date().toISOString();
+                    return lib;
+                },
+                { upsert: true }
+            );
             console.log(`✅ Digital items added to library for user: ${user.email}`);
         }
 
         // 🔔 Add Purchase Notification
         try {
-            if (!user.notifications) user.notifications = [];
-            user.notifications.unshift({
-                _id: 'purchase-' + Date.now(),
-                title: 'Purchase Successful! 🎉',
-                message: `Thank you for your order ${newOrder.orderId}. Your items are being processed.`,
-                type: 'Order',
-                link: 'profile.html?tab=orders',
-                isRead: false,
-                createdAt: new Date().toISOString()
+            await User.findByIdAndUpdate(user._id, (u) => {
+                if (!u.notifications) u.notifications = [];
+                u.notifications.unshift({
+                    _id: 'purchase-' + Date.now(),
+                    title: 'Purchase Successful! 🎉',
+                    message: `Thank you for your order ${newOrder.orderId}. Your items are being processed.`,
+                    type: 'Order',
+                    link: 'profile.html?tab=orders',
+                    isRead: false,
+                    createdAt: new Date().toISOString()
+                });
+                u.updatedAt = new Date().toISOString();
+                return u;
             });
-            await user.save();
         } catch (noteErr) {
             console.error('Purchase notification error:', noteErr);
         }
@@ -357,12 +396,58 @@ router.put('/:id/status', adminAuth, async (req, res) => {
             return res.status(404).json({ message: 'Order not found' });
         }
 
+        const oldStatus = order.status;
         order.status = status;
         order.timeline.push({ status, note: note || `Status updated to ${status}` });
-        await order.save();
 
+        // --- NEW: Fulfill Digital Items on Payment/Delivery ---
+        // If status becomes Paid/Delivered, unlock digital products for the user (only if not already paid)
+        if (['Paid', 'Delivered'].includes(status) && !['Paid', 'Delivered'].includes(oldStatus)) {
+            const userId = order.userId || (await User.findOne({ email: order.customer.email }))?._id;
+
+            if (userId) {
+                const digitalItems = [];
+                for (const item of order.items) {
+                    if (item.type === 'EBOOK' || item.type === 'AUDIOBOOK') {
+                        const product = await Product.findById(item.productId);
+                        if (product) {
+                            digitalItems.push({
+                                productId: product._id.toString(),
+                                title: product.title,
+                                type: product.type === 'AUDIOBOOK' ? 'Audiobook' : 'E-Book',
+                                thumbnail: product.thumbnail || 'img/vol1-cover.png',
+                                filePath: product.filePath || '',
+                                purchasedAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+
+                if (digitalItems.length > 0) {
+                    await DigitalLibrary.findOneAndUpdate(
+                        { userId: userId.toString() },
+                        (lib) => {
+                            if (!lib) return { userId: userId.toString(), items: digitalItems, updatedAt: new Date().toISOString() };
+                            if (!lib.items) lib.items = [];
+                            digitalItems.forEach(di => {
+                                if (!lib.items.some(li => (li.productId || '').toString() === di.productId.toString())) {
+                                    lib.items.push(di);
+                                }
+                            });
+                            lib.updatedAt = new Date().toISOString();
+                            return lib;
+                        },
+                        { upsert: true }
+                    );
+                    console.log(`✅ Status Update: Digital items unlocked for ${order.customer.email}`);
+                }
+            }
+        }
+
+        await order.save();
         res.json(order);
     } catch (error) {
+        console.error('Update Status Error:', error);
         res.status(500).json({ message: 'Error updating status' });
     }
 });
@@ -480,69 +565,69 @@ router.post('/test-digital', protect, async (req, res) => {
         });
 
         // 3. Update User Profile (Add to purchasedProducts)
-        // Check if `purchasedProducts` property exists (JsonAdapter compatibility)
-        if (!user.purchasedProducts) {
-            user.purchasedProducts = [];
-            await user.save(); // Initialize array
-        }
-
-        // Mongoose `addToSet` doesn't exist on POJO returned by JsonAdapter
-        // So we manually check and push
         const prodIdStr = product._id.toString();
-
-        // If it's an array of strings (typical in JSON) or ObjectIds
-        const isAlreadyPurchased = user.purchasedProducts.some(id => id.toString() === prodIdStr);
-
-        if (!isAlreadyPurchased) {
-            user.purchasedProducts.push(prodIdStr);
-            await user.save();
-        }
+        await User.findByIdAndUpdate(user._id, (u) => {
+            if (!u.purchasedProducts) u.purchasedProducts = [];
+            const isAlreadyPurchased = u.purchasedProducts.some(id => id.toString() === prodIdStr);
+            if (!isAlreadyPurchased) {
+                u.purchasedProducts.push(prodIdStr);
+            }
+            u.updatedAt = new Date().toISOString();
+            return u;
+        });
 
         // 4. Update Digital Library
-        let library = await DigitalLibrary.findOne({ userId: user._id.toString() });
-
-        if (!library) {
-            // Create new library entry for this user
-            library = await DigitalLibrary.create({
-                userId: user._id.toString(),
-                items: []
-            });
-        }
-
-        const alreadyInLib = (library.items || []).some(i =>
-            (i.productId || '').toString() === product._id.toString()
+        await DigitalLibrary.findOneAndUpdate(
+            { userId: user._id.toString() },
+            (lib) => {
+                if (!lib) {
+                    return {
+                        userId: user._id.toString(),
+                        items: [{
+                            productId: product._id.toString(),
+                            title: product.title,
+                            type: product.type === 'AUDIOBOOK' ? 'Audiobook' : 'E-Book',
+                            thumbnail: product.thumbnail || 'img/vol1-cover.png',
+                            filePath: product.filePath || '',
+                            purchasedAt: new Date().toISOString()
+                        }],
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+                if (!lib.items) lib.items = [];
+                const alreadyInLib = lib.items.some(i => (i.productId || '').toString() === product._id.toString());
+                if (!alreadyInLib) {
+                    lib.items.push({
+                        productId: product._id.toString(),
+                        title: product.title,
+                        type: product.type === 'AUDIOBOOK' ? 'Audiobook' : 'E-Book',
+                        thumbnail: product.thumbnail || 'img/vol1-cover.png',
+                        filePath: product.filePath || '',
+                        purchasedAt: new Date().toISOString()
+                    });
+                }
+                lib.updatedAt = new Date().toISOString();
+                return lib;
+            },
+            { upsert: true }
         );
-
-        if (!alreadyInLib) {
-            // Push new library item
-            if (!library.items) library.items = [];
-            library.items.push({
-                productId: product._id.toString(),
-                title: product.title,
-                type: product.type === 'AUDIOBOOK' ? 'Audiobook' : 'E-Book',
-                thumbnail: product.thumbnail || 'img/vol1-cover.png',
-                filePath: product.filePath || '',
-                purchasedAt: new Date().toISOString()
-            });
-            await library.save();
-            console.log(`✅ Library updated for user ${user._id}: added ${product.title}`);
-        } else {
-            console.log(`ℹ️ Product already in library for user ${user._id}: ${product.title}`);
-        }
 
         // 🔔 Add Purchase Notification (Test Mode)
         try {
-            if (!user.notifications) user.notifications = [];
-            user.notifications.unshift({
-                _id: 'purchase-test-' + Date.now(),
-                title: 'Item Unlocked! 🔓',
-                message: `"${product.title}" has been successfully added to your library.`,
-                type: 'Order',
-                link: 'profile.html?tab=library',
-                isRead: false,
-                createdAt: new Date().toISOString()
+            await User.findByIdAndUpdate(user._id, (u) => {
+                if (!u.notifications) u.notifications = [];
+                u.notifications.unshift({
+                    _id: 'purchase-test-' + Date.now(),
+                    title: 'Item Unlocked! 🔓',
+                    message: `"${product.title}" has been successfully added to your library.`,
+                    type: 'Order',
+                    link: 'profile.html?tab=library',
+                    isRead: false,
+                    createdAt: new Date().toISOString()
+                });
+                u.updatedAt = new Date().toISOString();
+                return u;
             });
-            await user.save();
         } catch (noteErr) {
             console.error('Test purchase notification error:', noteErr);
         }

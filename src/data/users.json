@@ -6,8 +6,44 @@
     "role": "admin",
     "_id": "admin_user_001",
     "createdAt": "2026-02-18T08:30:00.000Z",
-    "updatedAt": "2026-02-27T09:01:38.223Z",
+    "updatedAt": "2026-03-01T09:37:52.859Z",
     "notifications": [
+      {
+        "_id": "purchase-test-1772357872858",
+        "title": "Item Unlocked! 🔓",
+        "message": "\"EFV™ VOL 1: ORIGIN CODE™\" has been successfully added to your library.",
+        "type": "Order",
+        "link": "profile.html?tab=library",
+        "isRead": false,
+        "createdAt": "2026-03-01T09:37:52.859Z"
+      },
+      {
+        "_id": "purchase-test-1772356949403",
+        "title": "Item Unlocked! 🔓",
+        "message": "\"EFV™ VOL 1: ORIGIN CODE™\" has been successfully added to your library.",
+        "type": "Order",
+        "link": "profile.html?tab=library",
+        "isRead": false,
+        "createdAt": "2026-03-01T09:22:29.403Z"
+      },
+      {
+        "_id": "purchase-test-1772352091469",
+        "title": "Item Unlocked! 🔓",
+        "message": "\"EFV™ VOL 1: THE ORIGIN CODE™\" has been successfully added to your library.",
+        "type": "Order",
+        "link": "profile.html?tab=library",
+        "isRead": false,
+        "createdAt": "2026-03-01T08:01:31.470Z"
+      },
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      },
       {
         "_id": "purchase-1772182898221",
         "title": "Purchase Successful! 🎉",
@@ -28,7 +64,12 @@
     ],
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
-    "resetAttempts": null
+    "resetAttempts": null,
+    "purchasedProducts": [
+      "efv_v1_ebook_en",
+      "efv_v1_ebook",
+      "efv_v1_audiobook"
+    ]
   },
   {
     "name": "abha",
@@ -36,21 +77,12 @@
     "password": "$2a$10$fSqcc2xdtTLQwkosRflvQerBf3mZ3d4mmgxzR22755ikTB2aIRN1W",
     "_id": "mlrnq3u492vak53seqk",
     "createdAt": "2026-02-18T06:34:35.116Z",
-    "updatedAt": "2026-02-27T12:35:22.714Z",
+    "updatedAt": "2026-03-01T09:50:48.416Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
     "resetAttempts": null,
-    "notifications": [
-      {
-        "_id": "purchase-1772195722712",
-        "title": "Purchase Successful! 🎉",
-        "message": "Thank you for your order ORD-722704794. Your items are being processed.",
-        "type": "Order",
-        "link": "profile.html?tab=orders",
-        "isRead": false,
-        "createdAt": "2026-02-27T12:35:22.712Z"
-      }
-    ]
+    "notifications": [],
+    "_lastDeleteStatus": "SUCCESS"
   },
   {
     "name": "neha",
@@ -58,19 +90,48 @@
     "password": "$2a$10$DGSA5dUM4skP4vN5eLrmuuWdXbPTo054q/VpqlqIicpUgaFZJjBEO",
     "_id": "mlrqy21h6udeg0sdry",
     "createdAt": "2026-02-18T08:04:44.885Z",
-    "updatedAt": "2026-02-18T08:04:44.885Z"
+    "updatedAt": "2026-02-28T17:45:47.838Z",
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      }
+    ]
   },
   {
     "name": "Aditi",
     "email": "aditi@uwo24.com",
-    "password": "$2a$10$HjrfktWW0zAgMFzcZ/6vU.vTu5V6ZhwWia91vpc/YKOzRZgFtO.Q2",
+    "password": "$2a$10$67lhIq7enJ/86HLxaaoTtONI3DrHT9SE7MHeK6XALvVYNhNadAa8W",
     "_id": "mlt058axclnz799ag4q",
     "createdAt": "2026-02-19T05:10:02.313Z",
-    "updatedAt": "2026-02-27T07:24:20.426Z",
+    "updatedAt": "2026-03-01T09:50:23.941Z",
     "resetPasswordOTP": null,
     "resetPasswordExpires": null,
     "resetAttempts": null,
     "notifications": [
+      {
+        "_id": "purchase-test-1772358623941",
+        "title": "Item Unlocked! 🔓",
+        "message": "\"EFV™ VOL 1: THE ORIGIN CODE™\" has been successfully added to your library.",
+        "type": "Order",
+        "link": "profile.html?tab=library",
+        "isRead": false,
+        "createdAt": "2026-03-01T09:50:23.941Z"
+      },
+      {
+        "_id": "purchase-1772357171060",
+        "title": "Purchase Successful! 🎉",
+        "message": "Thank you for your order ORD-171058163. Your items are being processed.",
+        "type": "Order",
+        "link": "profile.html?tab=orders",
+        "isRead": false,
+        "createdAt": "2026-03-01T09:26:11.060Z"
+      },
       {
         "_id": "welcome-1771921322151",
         "type": "Digital",
@@ -82,20 +143,6 @@
     ],
     "savedAddresses": [
       {
-        "fullName": "Aditi Lakhera",
-        "phone": "7879171870",
-        "pincode": "482002",
-        "state": "Madhya Pradesh",
-        "city": "Jabalpur",
-        "house": "DFV",
-        "area": "VFDSFD",
-        "landmark": "FDV",
-        "type": "Home",
-        "isDefault": false,
-        "fullAddress": "DFV, VFDSFD",
-        "_id": "addr_mm1sn0lvt49z83rurdf"
-      },
-      {
         "fullName": "abha ",
         "phone": "8982882237",
         "pincode": "482001",
@@ -105,28 +152,16 @@
         "area": "tj",
         "landmark": "ghj",
         "type": "Home",
-        "isDefault": true,
+        "isDefault": false,
         "fullAddress": "tytdjy, tj",
         "_id": "addr_mm31qv431abiel7d0nl"
-      },
-      {
-        "fullName": "yt",
-        "phone": "8982882237",
-        "pincode": "282001",
-        "state": "jj",
-        "city": "jj",
-        "house": "g",
-        "area": "hh",
-        "landmark": "gg",
-        "type": "Work",
-        "isDefault": false,
-        "fullAddress": "g, hh",
-        "_id": "addr_mm31s5214s0q8jezvwa"
       }
     ],
     "purchasedProducts": [
-      "efv_v2_ebook"
-    ]
+      "efv_v2_ebook",
+      "efv_v1_ebook_en"
+    ],
+    "phone": "8982882237"
   },
   {
     "name": "devansh",
@@ -134,7 +169,18 @@
     "password": "$2a$10$P.hJpdElm6Y1SsEOZTEBhuMn4ICbIehPFFFh5RtTZTkUDC2TdSoLi",
     "_id": "mlt3pyymild20mav7n",
     "createdAt": "2026-02-19T06:50:08.830Z",
-    "updatedAt": "2026-02-19T06:50:08.830Z"
+    "updatedAt": "2026-02-28T17:45:47.897Z",
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      }
+    ]
   },
   {
     "name": "dev",
@@ -142,9 +188,20 @@
     "password": "$2a$10$G6li8OcA2LAohWWvz6DtZeobTQiX1b5v3/qwcrbaGl28DtpxaIvkG",
     "_id": "mlt3xccbr4w5rafjc6o",
     "createdAt": "2026-02-19T06:55:52.763Z",
-    "updatedAt": "2026-02-19T08:16:59.699Z",
+    "updatedAt": "2026-02-28T17:45:47.922Z",
     "purchasedProducts": [
       "efv_v1_ebook"
+    ],
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      }
     ]
   },
   {
@@ -153,10 +210,21 @@
     "password": "$2a$10$ZVfI/ry1kTViC4saSSwp9OMPdRurjK3nWz44LFZGUUjV3C1CENWma",
     "_id": "mlt6uwncwhedve19mfe",
     "createdAt": "2026-02-19T08:17:57.962Z",
-    "updatedAt": "2026-02-19T08:18:14.619Z",
+    "updatedAt": "2026-02-28T17:45:47.945Z",
     "purchasedProducts": [
       "efv_v1_audiobook",
       "efv_v1_ebook"
+    ],
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      }
     ]
   },
   {
@@ -167,10 +235,21 @@
     "role": "user",
     "_id": "mlt8fqcvzvjdherle1j",
     "createdAt": "2026-02-19T09:02:09.199Z",
-    "updatedAt": "2026-02-19T09:02:29.188Z",
+    "updatedAt": "2026-02-28T17:45:47.968Z",
     "purchasedProducts": [
       "efv_v1_audiobook",
       "efv_v1_ebook"
+    ],
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      }
     ]
   },
   {
@@ -180,6 +259,15 @@
     "password": "$2a$10$ko0DGpoO/4F4Agf45FmyV.7RtI1ECsy2RWVh6Lsk2KOUrw00ndsXK",
     "role": "user",
     "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      },
       {
         "_id": "welcome-new-1772005114747",
         "type": "Digital",
@@ -191,7 +279,7 @@
     ],
     "_id": "mm1q3d6jet4v6wksuyt",
     "createdAt": "2026-02-25T07:38:34.747Z",
-    "updatedAt": "2026-02-25T07:39:31.736Z"
+    "updatedAt": "2026-02-28T17:45:47.988Z"
   },
   {
     "name": "sakshi",
@@ -200,6 +288,15 @@
     "password": "$2a$10$1LUA60YvHd2TVwup8oNmaeF3TXEyVh5qWyO7h9JAV3fGkaf0sc6.C",
     "role": "user",
     "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      },
       {
         "_id": "purchase-1772185149905",
         "title": "Purchase Successful! 🎉",
@@ -220,6 +317,35 @@
     ],
     "_id": "mm4p7npe9ocy5nlbig8",
     "createdAt": "2026-02-27T09:37:13.922Z",
-    "updatedAt": "2026-02-27T09:39:09.907Z"
+    "updatedAt": "2026-02-28T17:45:48.008Z"
+  },
+  {
+    "name": "Test Admin",
+    "email": "test_admin_unique@test.com",
+    "phone": "1234567890",
+    "password": "$2a$10$mA0PitHXctUohFzXDZh/w.Z8Cv5O/NiLG4B09cXQUeqnwGosuQVoS",
+    "role": "user",
+    "notifications": [
+      {
+        "_id": "new-book-1772300747773",
+        "title": "New Arrival! 📚",
+        "message": "\"audio book \" is now available in the marketplace. Check it out now!",
+        "type": "Digital",
+        "link": "dashboard",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:45:47.773Z"
+      },
+      {
+        "_id": "welcome-new-1772299017694",
+        "type": "Digital",
+        "title": "Welcome to EFV, Test Admin! 🚀",
+        "message": "Your journey starts here. Explore our marketplace and build your personal library.",
+        "isRead": false,
+        "createdAt": "2026-02-28T17:16:57.701Z"
+      }
+    ],
+    "_id": "mm6l2q5o8zp4snv62ro",
+    "createdAt": "2026-02-28T17:16:57.709Z",
+    "updatedAt": "2026-02-28T17:45:48.031Z"
   }
 ]

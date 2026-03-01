@@ -35,37 +35,37 @@
     "userId": "admin_user_001",
     "productId": "efv_v1_audiobook",
     "type": "AUDIOBOOK",
-    "currentTime": 16.161086,
-    "lastUpdated": 1772022040322,
+    "currentTime": 1.278941,
+    "lastUpdated": 1772356879574,
     "_id": "mlrw82wmt5rkofsaw8p",
     "createdAt": "2026-02-18T10:32:30.646Z",
-    "updatedAt": "2026-02-25T12:20:40.323Z",
-    "progress": 16.392870866544293,
-    "totalDuration": 98.586063
+    "updatedAt": "2026-03-01T09:21:19.577Z",
+    "progress": 0.14035469432058983,
+    "totalDuration": 911.22068
   },
   {
     "userId": "admin_user_001",
     "productId": "efv_v1_ebook",
     "type": "EBOOK",
-    "lastPage": 10,
-    "totalPages": 196,
-    "lastUpdated": 1772189689770,
+    "lastPage": 5,
+    "totalPages": 176,
+    "lastUpdated": 1772357350390,
     "_id": "mlry9un97u4whufv6d5",
     "createdAt": "2026-02-18T11:29:52.485Z",
-    "updatedAt": "2026-02-27T10:54:49.771Z",
-    "progress": 5.1020408163265305
+    "updatedAt": "2026-03-01T09:29:10.391Z",
+    "progress": 2.840909090909091
   },
   {
     "userId": "mlt058axclnz799ag4q",
     "productId": "efv_v1_audiobook",
     "type": "AUDIOBOOK",
-    "progress": 69.19442744828973,
-    "currentTime": 14.08968,
-    "totalDuration": 20.362449,
-    "lastUpdated": 1771910466868,
+    "progress": 43.533526084277874,
+    "currentTime": 12.793226,
+    "totalDuration": 1006.468934,
+    "lastUpdated": 1772357048045,
     "_id": "mlt23d3aftrj2sb1kg6",
     "createdAt": "2026-02-19T06:04:34.438Z",
-    "updatedAt": "2026-02-24T05:21:06.870Z"
+    "updatedAt": "2026-03-01T09:24:08.048Z"
   },
   {
     "userId": "mlt058axclnz799ag4q",
@@ -161,5 +161,17 @@
     "_id": "mlt8gdoin281ndempp",
     "createdAt": "2026-02-19T09:02:39.426Z",
     "updatedAt": "2026-02-19T09:53:22.374Z"
+  },
+  {
+    "userId": "admin_user_001",
+    "productId": "mm6m3t2ss1jq25egk5h",
+    "type": "AUDIOBOOK",
+    "progress": 0.2534275231769323,
+    "currentTime": 2.309284,
+    "totalDuration": 911.22068,
+    "lastUpdated": 1772339559132,
+    "_id": "mm6m61mtonzlbwr2z9",
+    "createdAt": "2026-02-28T17:47:32.165Z",
+    "updatedAt": "2026-03-01T04:32:39.135Z"
   }
 ]

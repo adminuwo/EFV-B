@@ -1,6 +1,28 @@
 const fs = require('fs');
 const path = require('path');
 
+// Simple promise-based mutex for file operations to prevent race conditions
+const locks = new Map();
+
+async function withLock(filepath, operation) {
+    if (!locks.has(filepath)) {
+        locks.set(filepath, Promise.resolve());
+    }
+
+    const currentLock = locks.get(filepath);
+    const newLock = currentLock.then(async () => {
+        try {
+            return await operation();
+        } catch (error) {
+            console.error(`Lock operation error on ${filepath}:`, error);
+            throw error;
+        }
+    });
+
+    locks.set(filepath, newLock);
+    return newLock;
+}
+
 class JsonDB {
     constructor(filename) {
         this.filepath = path.join(__dirname, '..', 'data', filename);
@@ -8,84 +30,117 @@ class JsonDB {
     }
 
     init() {
-        // Ensure data directory exists
         const dataDir = path.dirname(this.filepath);
         if (!fs.existsSync(dataDir)) {
             fs.mkdirSync(dataDir, { recursive: true });
         }
 
-        // Create file if it doesn't exist
         if (!fs.existsSync(this.filepath)) {
-            this.write([]);
+            fs.writeFileSync(this.filepath, JSON.stringify([], null, 2), 'utf8');
         }
     }
 
-    read() {
-        try {
-            const data = fs.readFileSync(this.filepath, 'utf8');
-            return JSON.parse(data);
-        } catch (error) {
-            console.error(`Error reading ${this.filepath}:`, error);
-            return [];
-        }
+    async read() {
+        return withLock(this.filepath, async () => {
+            try {
+                if (!fs.existsSync(this.filepath)) return [];
+                const data = fs.readFileSync(this.filepath, 'utf8');
+                return JSON.parse(data);
+            } catch (error) {
+                console.error(`Error reading ${this.filepath}:`, error);
+                return [];
+            }
+        });
     }
 
-    write(data) {
-        try {
-            fs.writeFileSync(this.filepath, JSON.stringify(data, null, 2));
-            console.log(`💾 JSON DB WRITE SUCCESS: ${path.basename(this.filepath)} (${data.length} items)`);
-            return true;
-        } catch (error) {
-            console.error(`Error writing to ${this.filepath}:`, error);
-            return false;
-        }
+    async write(data) {
+        return withLock(this.filepath, async () => {
+            try {
+                fs.writeFileSync(this.filepath, JSON.stringify(data, null, 2), 'utf8');
+                console.log(`💾 JSON DB WRITE SUCCESS: ${path.basename(this.filepath)} (${data.length} items)`);
+                return true;
+            } catch (error) {
+                console.error(`Error writing to ${this.filepath}:`, error);
+                return false;
+            }
+        });
     }
 
     // CRUD Operations
-    getAll() {
+    async getAll() {
         return this.read();
     }
 
-    getById(id) {
-        const data = this.read();
-        return data.find(item => item._id === id || item.id === id);
+    async getById(id) {
+        const data = await this.read();
+        const sid = String(id);
+        return data.find(item => String(item._id || item.id) === sid);
     }
 
-    create(item) {
-        const data = this.read();
-        // Generate simple ID if not provided
-        if (!item._id && !item.id) {
-            item._id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        }
-        item.createdAt = new Date().toISOString();
-        item.updatedAt = new Date().toISOString();
+    async create(item) {
+        return withLock(this.filepath, async () => {
+            const data = [];
+            try {
+                const existing = fs.readFileSync(this.filepath, 'utf8');
+                data.push(...JSON.parse(existing));
+            } catch (e) { }
 
-        data.push(item);
-        this.write(data);
-        return item;
+            if (!item._id && !item.id) {
+                item._id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+            item.createdAt = new Date().toISOString();
+            item.updatedAt = new Date().toISOString();
+
+            data.push(item);
+            fs.writeFileSync(this.filepath, JSON.stringify(data, null, 2), 'utf8');
+            return item;
+        });
     }
 
-    update(id, updates) {
-        const data = this.read();
-        const index = data.findIndex(item => item._id === id || item.id === id);
+    async update(id, updatesOrFn) {
+        return withLock(this.filepath, async () => {
+            const data = [];
+            try {
+                const existing = fs.readFileSync(this.filepath, 'utf8');
+                data.push(...JSON.parse(existing));
+            } catch (e) { }
 
-        if (index !== -1) {
-            data[index] = { ...data[index], ...updates, updatedAt: new Date().toISOString() };
-            this.write(data);
-            return data[index];
-        }
-        return null;
+            const sid = String(id);
+            const index = data.findIndex(item => String(item._id || item.id) === sid);
+
+            if (index !== -1) {
+                if (typeof updatesOrFn === 'function') {
+                    // Atomic transformation
+                    data[index] = updatesOrFn(data[index]);
+                } else {
+                    // Basic merge
+                    data[index] = { ...data[index], ...updatesOrFn, updatedAt: new Date().toISOString() };
+                }
+
+                fs.writeFileSync(this.filepath, JSON.stringify(data, null, 2), 'utf8');
+                return data[index];
+            }
+            return null;
+        });
     }
 
-    delete(id) {
-        const data = this.read();
-        const filteredData = data.filter(item => item._id !== id && item.id !== id);
+    async delete(id) {
+        return withLock(this.filepath, async () => {
+            const data = [];
+            try {
+                const existing = fs.readFileSync(this.filepath, 'utf8');
+                data.push(...JSON.parse(existing));
+            } catch (e) { }
 
-        if (data.length !== filteredData.length) {
-            this.write(filteredData);
-            return true;
-        }
-        return false;
+            const sid = String(id);
+            const filteredData = data.filter(item => String(item._id || item.id) !== sid);
+
+            if (data.length !== filteredData.length) {
+                fs.writeFileSync(this.filepath, JSON.stringify(filteredData, null, 2), 'utf8');
+                return true;
+            }
+            return false;
+        });
     }
 }
 
